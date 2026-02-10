@@ -35,8 +35,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../../components/ui/select';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
-import { TimePeriod, TradeFilter } from '../../types';
+import { Card, CardContent, CardDescription, CardTitle } from '../../components/ui/card';
+import { TimePeriod } from '../../types';
 import {
   filterTradesByPeriod,
   getTradesByDate,

@@ -3,8 +3,6 @@ import {
   MT5Account,
   MT5ConnectFormData,
   MT5DashboardData,
-  MT5Position,
-  MT5Trade,
 } from '../types';
 import * as mt5Api from '../api/mt5.api';
 

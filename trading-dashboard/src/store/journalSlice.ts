@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { journalApi, GetJournalsParams } from '../api/journal.api';
 import { TradeJournal, JournalFormData, JournalStats, PaginationInfo } from '../types';
 
@@ -24,7 +24,7 @@ const initialState: JournalState = {
 
 export const fetchJournals = createAsyncThunk(
   'journal/fetchJournals',
-  async (params?: GetJournalsParams, { rejectWithValue }) => {
+  async (params: GetJournalsParams | undefined, { rejectWithValue }) => {
     try {
       const response = await journalApi.getJournals(params);
       return response;

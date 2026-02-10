@@ -3,12 +3,6 @@ import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 import {
   BarChart3,
-  TrendingDown,
-  Clock,
-  Globe,
-  Calendar,
-  Target,
-  Award,
   LineChart,
   PanelLeftClose,
   PanelLeft,

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAppDispatch } from '../store/hooks';
 import { updateJournal, createJournal } from '../store/journalSlice';
-import { TradeJournal, ExecutionChecklistItem } from '../types';
+import { TradeJournal } from '../types';
 import { Button } from './ui/button';
 import { Smile, BookOpen, CheckCircle, Image as ImageIcon } from 'lucide-react';
 
