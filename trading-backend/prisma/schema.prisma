@@ -1,0 +1,294 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  trades       Trade[]
+  stats        UserStats[]
+  mt5Accounts  MT5Account[]
+
+  @@map("users")
+}
+
+model Trade {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Trade Details
+  position   String
+  symbol     String
+  type       String   // 'buy' or 'sell'
+  volume     Float
+  openPrice  Float
+  stopLoss   Float?
+  takeProfit Float?
+  openTime   DateTime
+  closeTime  DateTime
+  closePrice Float
+
+  // Financials
+  commission Float    @default(0)
+  swap       Float    @default(0)
+  profit     Float
+
+  // Metadata
+  source     String   @default("upload") // 'upload' or 'manual'
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  journal    TradeJournal?
+
+  @@index([userId])
+  @@index([userId, symbol])
+  @@index([userId, closeTime])
+  @@map("trades")
+}
+
+model TradeJournal {
+  id       String @id @default(cuid())
+  tradeId  String @unique
+  trade    Trade  @relation(fields: [tradeId], references: [id], onDelete: Cascade)
+  userId   String
+
+  // Journal Content
+  preTradeAnalysis  String? @db.Text
+  postTradeReview   String? @db.Text
+  emotions          String? @db.Text
+  lessonsLearned    String? @db.Text
+
+  // Metadata
+  tags              String[] @default([])
+  rating            Int?     @default(5) // 1-10 scale
+
+  // Execution Checklist (stored as JSON)
+  executionChecklist Json?   @default("{\"items\":[]}")
+
+  // Screenshots (array of URLs)
+  screenshots       String[] @default([])
+
+  // Status
+  status            String   @default("new") // 'new', 'journaled', 'pending'
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([userId, status])
+  @@index([tradeId])
+  @@map("trade_journals")
+}
+
+model UserStats {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Filter Parameters (for caching)
+  timePeriod String  // 'today', '7days', '30days', '3months', '1year', 'all'
+  assetFilter String @default("all")
+  tradeFilter String @default("all") // 'all', 'winners', 'losers'
+  
+  // Basic Stats
+  totalPnL      Float
+  winRate       Float
+  profitFactor  Float
+  expectancy    Float
+  totalTrades   Int
+  wins          Int
+  losses        Int
+  
+  // Trade Stats
+  avgWinner     Float
+  avgLoser      Float
+  bestTrade     Float
+  worstTrade    Float
+  winStreak     Int
+  lossStreak    Int
+  
+  // Direction Stats
+  longTrades    Int
+  longPnL       Float
+  longWinRate   Float
+  shortTrades   Int
+  shortPnL      Float
+  shortWinRate  Float
+  
+  // Profit/Loss
+  grossProfit   Float
+  grossLoss     Float
+  
+  // Drawdown Stats
+  maxDrawdown         Float
+  maxDrawdownPercent  Float
+  avgDrawdown         Float
+  avgDrawdownDuration Float
+  maxDrawdownDuration Float
+  recoveryFactor      Float
+  currentDrawdown     Float
+  
+  // Duration Stats
+  avgHoldTimeWinners Float
+  avgHoldTimeLosers  Float
+  avgHoldTimeAll     Float
+  optimalHoldingWindow String
+  
+  // Timestamps
+  calculatedAt DateTime @default(now())
+  expiresAt    DateTime
+  
+  @@unique([userId, timePeriod, assetFilter, tradeFilter])
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("user_stats")
+}
+
+model SessionStats {
+  id        String   @id @default(cuid())
+  userId    String
+
+  // Filter Parameters
+  timePeriod  String
+  assetFilter String @default("all")
+  tradeFilter String @default("all")
+
+  // Session Info
+  session     String   // 'Asia', 'London', 'New York', 'London-NY Overlap'
+  trades      Int
+  pnl         Float
+  winRate     Float
+  expectancy  Float
+  avgProfit   Float
+
+  // Timestamps
+  calculatedAt DateTime @default(now())
+  expiresAt    DateTime
+
+  @@unique([userId, timePeriod, assetFilter, tradeFilter, session])
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("session_stats")
+}
+
+// ============================================
+// MT5 Integration Models
+// ============================================
+
+model MT5Account {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Connection Details (encrypted)
+  accountNumber     Int
+  investorPassword  String   // Will be encrypted using crypto
+  server            String
+
+  // Account Info from MT5 API
+  accountName       String?
+  balance           Float?
+  equity            Float?
+  profit            Float?
+  margin            Float?
+  marginFree        Float?
+  marginLevel       Float?
+  currency          String?
+  leverage          Int?
+  company           String?
+
+  // Status
+  isActive          Boolean  @default(true)
+  isPrimary         Boolean  @default(false) // Primary account for user
+  lastSyncAt        DateTime?
+  lastError         String?
+
+  // Timestamps
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  mt5Trades         MT5Trade[]
+  mt5Positions      MT5Position[]
+
+  @@unique([userId, accountNumber, server])
+  @@index([userId])
+  @@index([userId, isPrimary])
+  @@map("mt5_accounts")
+}
+
+model MT5Trade {
+  id              String      @id @default(cuid())
+  mt5AccountId    String
+  mt5Account      MT5Account  @relation(fields: [mt5AccountId], references: [id], onDelete: Cascade)
+  userId          String
+
+  // MT5 Trade Details (from history API)
+  ticket          BigInt      @unique  // MT5 ticket number
+  order           BigInt                // MT5 order number
+  time            DateTime              // Trade execution time
+  type            String                // BUY, SELL, BALANCE, CREDIT, etc.
+  entry           Int                   // Entry type
+  symbol          String                // Trading symbol (e.g., XAUUSD)
+  volume          Float                 // Trade volume in lots
+  price           Float                 // Execution price
+  profit          Float                 // Trade profit/loss
+  commission      Float                 // Commission charged
+  swap            Float                 // Swap/rollover
+  comment         String?               // Trade comment
+
+  // Timestamps
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([mt5AccountId])
+  @@index([userId])
+  @@index([userId, time])
+  @@index([symbol])
+  @@map("mt5_trades")
+}
+
+model MT5Position {
+  id              String      @id @default(cuid())
+  mt5AccountId    String
+  mt5Account      MT5Account  @relation(fields: [mt5AccountId], references: [id], onDelete: Cascade)
+  userId          String
+
+  // Position Details (from positions API)
+  ticket          BigInt                // Position ticket
+  symbol          String                // Trading symbol
+  type            String                // BUY or SELL
+  volume          Float                 // Position volume in lots
+  openPrice       Float                 // Open price
+  currentPrice    Float?                // Current market price
+  stopLoss        Float?                // Stop loss level
+  takeProfit      Float?                // Take profit level
+  profit          Float                 // Current profit/loss
+  swap            Float                 // Swap charges
+  commission      Float                 // Commission
+  openTime        DateTime              // Position open time
+
+  // Timestamps
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@unique([mt5AccountId, ticket])
+  @@index([mt5AccountId])
+  @@index([userId])
+  @@map("mt5_positions")
+}
