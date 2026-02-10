@@ -1,14 +1,14 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchTradesWithFilters, deleteTrade, deleteAllTrades } from '../../store/tradingSlice';
-import { fetchMT5Accounts, syncMT5Account, deleteMT5Account, setConnectModalOpen } from '../../store/mt5Slice';
+import { fetchMT5Accounts } from '../../store/mt5Slice';
 import { TradeFiltersState } from '../../types';
 import TradesTable from '../TradesTable';
 import TradeFilters from '../TradeFilters';
 import AddTradeModal from '../AddTradeModal';
 import MT5ConnectModal from '../mt5/MT5ConnectModal';
 import { Button } from '../ui/button';
-import { Plus, Trash2, ChevronLeft, ChevronRight, RefreshCw, Link, X } from 'lucide-react';
+import { Plus, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function TradesPage() {
   const dispatch = useAppDispatch();
@@ -24,16 +24,10 @@ export default function TradesPage() {
     limit: 50,
   });
 
-  const { accounts, selectedAccountId, isSyncing } = useAppSelector((state) => state.mt5);
-
   // Fetch MT5 accounts on mount
   useEffect(() => {
     dispatch(fetchMT5Accounts());
   }, [dispatch]);
-
-  const handleConnectAccount = () => {
-    dispatch(setConnectModalOpen(true));
-  };
 
   // Extract unique symbols from all trades
   const availableSymbols = useMemo(() => {
@@ -61,26 +55,6 @@ export default function TradesPage() {
   useEffect(() => {
     fetchTrades();
   }, [fetchTrades]);
-
-  const handleSync = async () => {
-    if (selectedAccountId) {
-      await dispatch(syncMT5Account(selectedAccountId));
-      // Re-fetch trades after sync to include new MT5 data
-      fetchTrades();
-    }
-  };
-
-  const handleDeleteAccount = async (accountId: string, accountNumber: number) => {
-    if (window.confirm(`Are you sure you want to disconnect MT5 account #${accountNumber}? This will remove all synced trades from this account.`)) {
-      try {
-        await dispatch(deleteMT5Account(accountId)).unwrap();
-        fetchTrades();
-      } catch (error) {
-        console.error('Failed to delete MT5 account:', error);
-        alert('Failed to disconnect account. Please try again.');
-      }
-    }
-  };
 
   const handleFilterChange = async (newFilters: TradeFiltersState) => {
     setFilters({ ...newFilters, page: 1 }); // Reset to page 1 when filters change
@@ -151,72 +125,6 @@ export default function TradesPage() {
 
   return (
     <div className="space-y-6">
-      {/* MT5 Account Management */}
-      {/* <div className="bg-card border rounded-lg p-4 mb-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center">
-              <Link className="h-5 w-5 text-green-500" />
-            </div>
-            <div>
-              <h3 className="font-semibold">MT5 Integration</h3>
-              <p className="text-sm text-muted-foreground">
-                {accounts.length > 0
-                  ? `${accounts.length} account${accounts.length > 1 ? 's' : ''} connected`
-                  : 'Connect your MT5 account to sync trades automatically'}
-              </p>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            {accounts.length > 0 && selectedAccountId && (
-              <Button
-                onClick={handleSync}
-                variant="outline"
-                size="sm"
-                disabled={isSyncing}
-              >
-                <RefreshCw className={`h-4 w-4 mr-2 ${isSyncing ? 'animate-spin' : ''}`} />
-                {isSyncing ? 'Syncing...' : 'Sync'}
-              </Button>
-            )}
-            <Button onClick={handleConnectAccount} size="sm" variant="outline">
-              <Plus className="h-4 w-4 mr-2" />
-              Connect Account
-            </Button>
-          </div>
-        </div>
-
-        {accounts.length > 0 && (
-          <div className="mt-4 space-y-2 border-t pt-4">
-            {accounts.map((account) => (
-              <div
-                key={account.id}
-                className="flex items-center justify-between rounded-md border px-3 py-2"
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`h-2 w-2 rounded-full ${account.isActive ? 'bg-green-500' : 'bg-gray-400'}`} />
-                  <div>
-                    <span className="text-sm font-medium">#{account.accountNumber}</span>
-                    <span className="text-sm text-muted-foreground ml-2">{account.server}</span>
-                    {account.isPrimary && (
-                      <span className="ml-2 text-xs bg-blue-500/10 text-blue-500 px-1.5 py-0.5 rounded">Primary</span>
-                    )}
-                  </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleDeleteAccount(account.id, account.accountNumber)}
-                  className="text-muted-foreground hover:text-red-500 h-8 w-8 p-0"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
-          </div>
-        )}
-      </div> */}
-
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
