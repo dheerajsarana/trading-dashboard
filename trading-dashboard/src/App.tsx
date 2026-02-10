@@ -7,7 +7,6 @@ import Sidebar from './components/Sidebar';
 import AnalyticsMenu from './components/menus/AnalyticsMenu';
 import TradesPage from './components/pages/TradesPage';
 import JournalPage from './components/pages/JournalPage';
-import DashboardPage from './components/pages/DashboardPage';
 import LoginForm from './components/auth/LoginForm';
 import RegisterForm from './components/auth/RegisterForm';
 import ProtectedRoute from './components/auth/ProtectedRoute';

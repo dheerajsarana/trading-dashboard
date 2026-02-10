@@ -22,7 +22,7 @@ export const connectMT5Account = async (data: MT5ConnectFormData): Promise<{ suc
  * Get all MT5 accounts
  */
 export const getMT5Accounts = async (): Promise<{ success: boolean; accounts: MT5Account[] }> => {
-  const response = await apiClient.get(`${MT5_BASE_PATH}/accounts`);
+  const response = await apiClient.get<{ success: boolean; accounts: MT5Account[] }>(`${MT5_BASE_PATH}/accounts`);
   return response;
 };
 
@@ -30,7 +30,7 @@ export const getMT5Accounts = async (): Promise<{ success: boolean; accounts: MT
  * Get single MT5 account
  */
 export const getMT5Account = async (accountId: string): Promise<{ success: boolean; account: MT5Account }> => {
-  const response = await apiClient.get(`${MT5_BASE_PATH}/accounts/${accountId}`);
+  const response = await apiClient.get<{ success: boolean; account: MT5Account }>(`${MT5_BASE_PATH}/accounts/${accountId}`);
   return response;
 };
 
@@ -41,7 +41,7 @@ export const updateMT5Account = async (
   accountId: string,
   data: { investorPassword?: string; isPrimary?: boolean }
 ): Promise<{ success: boolean; account: MT5Account }> => {
-  const response = await apiClient.put(`${MT5_BASE_PATH}/accounts/${accountId}`, data);
+  const response = await apiClient.put<{ success: boolean; account: MT5Account }>(`${MT5_BASE_PATH}/accounts/${accountId}`, data);
   return response;
 };
 
@@ -49,7 +49,7 @@ export const updateMT5Account = async (
  * Delete (disconnect) MT5 account
  */
 export const deleteMT5Account = async (accountId: string): Promise<{ success: boolean; message: string }> => {
-  const response = await apiClient.delete(`${MT5_BASE_PATH}/accounts/${accountId}`);
+  const response = await apiClient.delete<{ success: boolean; message: string }>(`${MT5_BASE_PATH}/accounts/${accountId}`);
   return response;
 };
 
@@ -67,7 +67,15 @@ export const syncMT5Account = async (
     lastSyncAt: string;
   };
 }> => {
-  const response = await apiClient.post(`${MT5_BASE_PATH}/accounts/${accountId}/sync`);
+  const response = await apiClient.post<{
+    success: boolean;
+    data: {
+      account: MT5Account;
+      tradesImported: number;
+      positionsUpdated: number;
+      lastSyncAt: string;
+    };
+  }>(`${MT5_BASE_PATH}/accounts/${accountId}/sync`);
   return response;
 };
 
@@ -78,7 +86,7 @@ export const getMT5Dashboard = async (
   accountId: string,
   timePeriod: string = '30days'
 ): Promise<{ success: boolean; data: MT5DashboardData }> => {
-  const response = await apiClient.get(`${MT5_BASE_PATH}/accounts/${accountId}/dashboard`, {
+  const response = await apiClient.get<{ success: boolean; data: MT5DashboardData }>(`${MT5_BASE_PATH}/accounts/${accountId}/dashboard`, {
     params: { timePeriod },
   });
   return response;
@@ -91,7 +99,7 @@ export const getMT5EquityCurve = async (
   accountId: string,
   timePeriod: string = '30days'
 ): Promise<{ success: boolean; data: EquityPoint[] }> => {
-  const response = await apiClient.get(`${MT5_BASE_PATH}/accounts/${accountId}/equity`, {
+  const response = await apiClient.get<{ success: boolean; data: EquityPoint[] }>(`${MT5_BASE_PATH}/accounts/${accountId}/equity`, {
     params: { timePeriod },
   });
   return response;

@@ -1,6 +1,6 @@
 import { apiClient } from './client';
 import { API_CONFIG } from '../config/api.config';
-import { TradeJournal, JournalFormData, JournalStats, PaginationInfo } from '../types';
+import { TradeJournal, JournalFormData, PaginationInfo } from '../types';
 
 export interface GetJournalsParams {
   status?: 'all' | 'new' | 'journaled' | 'pending';
