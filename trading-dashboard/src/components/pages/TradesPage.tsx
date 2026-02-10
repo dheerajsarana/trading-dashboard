@@ -152,7 +152,7 @@ export default function TradesPage() {
   return (
     <div className="space-y-6">
       {/* MT5 Account Management */}
-      <div className="bg-card border rounded-lg p-4 mb-6">
+      {/* <div className="bg-card border rounded-lg p-4 mb-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center">
@@ -186,7 +186,6 @@ export default function TradesPage() {
           </div>
         </div>
 
-        {/* Connected Accounts List */}
         {accounts.length > 0 && (
           <div className="mt-4 space-y-2 border-t pt-4">
             {accounts.map((account) => (
@@ -216,7 +215,7 @@ export default function TradesPage() {
             ))}
           </div>
         )}
-      </div>
+      </div> */}
 
       {/* Header */}
       <div className="flex items-center justify-between">
