@@ -76,11 +76,11 @@ export class MT5Service {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error: any = await response.json();
         throw new Error(error.error || 'Failed to fetch MT5 data');
       }
 
-      const data = await response.json();
+      const data: any = await response.json();
       return data;
     } catch (error: any) {
       console.error('MT5 API Error:', error);
