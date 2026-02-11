@@ -20,6 +20,19 @@ services:
           property: connectionString
       - key: REDIS_ENABLED
         value: "false"
+      - key: CACHE_TTL
+        value: "3600"
+      - key: MT5_ENCRYPTION_KEY
+        sync: false
+      # Supabase Storage Configuration
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: S3_BUCKET_NAME
+        value: "screenshots"
+      - key: MAX_FILE_SIZE
+        value: "5242880"
 
 databases:
   - name: trading-db
