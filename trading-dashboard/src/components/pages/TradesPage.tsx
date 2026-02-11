@@ -9,10 +9,14 @@ import AddTradeModal from '../AddTradeModal';
 import MT5ConnectModal from '../mt5/MT5ConnectModal';
 import { Button } from '../ui/button';
 import { Plus, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useToast } from '../ui/use-toast';
+import { useConfirmDialog } from '../../hooks/useConfirmDialog';
 
 export default function TradesPage() {
   const dispatch = useAppDispatch();
   const { allTrades, isLoading, pagination } = useAppSelector((state) => state.trading);
+  const { toast } = useToast();
+  const { confirm, ConfirmDialog } = useConfirmDialog();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filters, setFilters] = useState<TradeFiltersState>({
@@ -74,28 +78,68 @@ export default function TradesPage() {
   };
 
   const handleDeleteTrade = async (tradeId: string) => {
-    if (window.confirm('Are you sure you want to delete this trade? This action cannot be undone.')) {
+    const confirmed = await confirm({
+      title: 'Delete Trade',
+      description: 'Are you sure you want to delete this trade? This action cannot be undone.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      variant: 'destructive',
+    });
+
+    if (confirmed) {
       try {
         await dispatch(deleteTrade(tradeId)).unwrap();
-        await fetchTrades(); // Refresh trades after deletion
+        await fetchTrades();
+        toast({
+          title: 'Trade deleted',
+          description: 'The trade has been successfully deleted.',
+          variant: 'success',
+        });
       } catch (error) {
         console.error('Failed to delete trade:', error);
-        alert('Failed to delete trade. Please try again.');
+        toast({
+          title: 'Error',
+          description: 'Failed to delete trade. Please try again.',
+          variant: 'destructive',
+        });
       }
     }
   };
 
   const handleDeleteAllTrades = async () => {
-    const confirmMessage = `Are you sure you want to delete ALL ${pagination?.total || 0} trades? This action cannot be undone.`;
-    if (window.confirm(confirmMessage)) {
-      const doubleConfirm = window.confirm('This will permanently delete all your trades. Are you absolutely sure?');
-      if (doubleConfirm) {
+    const confirmed = await confirm({
+      title: 'Delete All Trades',
+      description: `Are you sure you want to delete ALL ${pagination?.total || 0} trades? This action cannot be undone.`,
+      confirmText: 'Delete All',
+      cancelText: 'Cancel',
+      variant: 'destructive',
+    });
+
+    if (confirmed) {
+      const doubleConfirmed = await confirm({
+        title: 'Final Confirmation',
+        description: 'This will permanently delete all your trades. Are you absolutely sure?',
+        confirmText: 'Yes, Delete Everything',
+        cancelText: 'Cancel',
+        variant: 'destructive',
+      });
+
+      if (doubleConfirmed) {
         try {
           await dispatch(deleteAllTrades()).unwrap();
           await fetchTrades();
+          toast({
+            title: 'All trades deleted',
+            description: 'All trades have been successfully deleted.',
+            variant: 'success',
+          });
         } catch (error) {
           console.error('Failed to delete all trades:', error);
-          alert('Failed to delete all trades. Please try again.');
+          toast({
+            title: 'Error',
+            description: 'Failed to delete all trades. Please try again.',
+            variant: 'destructive',
+          });
         }
       }
     }
@@ -232,6 +276,9 @@ export default function TradesPage() {
 
       {/* MT5 Connect Modal */}
       <MT5ConnectModal />
+
+      {/* Confirmation Dialog */}
+      <ConfirmDialog />
     </div>
   );
 }

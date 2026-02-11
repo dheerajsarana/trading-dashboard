@@ -46,8 +46,10 @@ import {
 } from '../../utils/statistics';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { Check, TrendingDown, TrendingUp, Upload, X } from 'lucide-react';
+import { useToast } from '../ui/use-toast';
 const AnalyticsMenu = () => {
     const dispatch = useAppDispatch();
+    const { toast } = useToast();
     const {
         allTrades,
         stats,
@@ -87,9 +89,18 @@ const AnalyticsMenu = () => {
             await dispatch(fetchTrades()).unwrap();
             await dispatch(fetchStats({ timePeriod, assetFilter, tradeFilter })).unwrap();
             await dispatch(fetchEquityCurve({ timePeriod, assetFilter, tradeFilter })).unwrap();
+            toast({
+                title: 'Success',
+                description: 'Trades uploaded successfully.',
+                variant: 'success',
+            });
         } catch (error) {
             console.error('Error uploading file:', error);
-            alert('Failed to upload trades. Please try again.');
+            toast({
+                title: 'Upload Failed',
+                description: 'Failed to upload trades. Please try again.',
+                variant: 'destructive',
+            });
         }
     };
 

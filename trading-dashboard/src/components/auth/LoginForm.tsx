@@ -4,10 +4,12 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loginUser, clearError } from '../../store/authSlice';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { useToast } from '../ui/use-toast';
 
 export default function LoginForm() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { toast } = useToast();
   const { isLoading, error, isAuthenticated } = useAppSelector((state) => state.auth);
 
   const [email, setEmail] = useState('');
@@ -37,9 +39,16 @@ export default function LoginForm() {
     try {
       await dispatch(loginUser({ email, password })).unwrap();
       navigate('/dashboard/analytics');
-    } catch (err) {
+    } catch (err: any) {
       // Error is handled by Redux state
       console.error('Login failed:', err);
+
+      // Also show toast notification
+      toast({
+        title: 'Login Failed',
+        description: err || error || 'Invalid credentials. Please try again.',
+        variant: 'destructive',
+      });
     }
   };
 

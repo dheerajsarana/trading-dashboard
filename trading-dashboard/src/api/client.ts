@@ -61,21 +61,7 @@ class ApiClient {
    * Handle API response
    */
   private async handleResponse<T>(response: Response): Promise<T> {
-    // Handle 401 Unauthorized - redirect to login
-    if (response.status === 401) {
-      authService.clearAuth();
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
-      }
-      throw new Error('Unauthorized - Please login again');
-    }
-
-    // Handle 403 Forbidden
-    if (response.status === 403) {
-      throw new Error('Access denied');
-    }
-
-    // Parse response
+    // Parse response first
     const contentType = response.headers.get('content-type');
     const isJson = contentType?.includes('application/json');
 
@@ -84,6 +70,23 @@ class ApiClient {
       data = await response.json();
     } else {
       data = await response.text();
+    }
+
+    // Handle 401 Unauthorized
+    if (response.status === 401) {
+      // If we're not on the login page, redirect
+      if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
+        authService.clearAuth();
+        window.location.href = '/login';
+      }
+      // Throw the actual error message from backend
+      const errorMessage = data?.message || data?.error || 'Invalid credentials';
+      throw new Error(errorMessage);
+    }
+
+    // Handle 403 Forbidden
+    if (response.status === 403) {
+      throw new Error('Access denied');
     }
 
     // Handle error responses

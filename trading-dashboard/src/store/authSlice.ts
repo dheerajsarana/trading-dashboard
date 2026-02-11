@@ -47,7 +47,11 @@ export const loginUser = createAsyncThunk(
       authService.saveUser(response.user);
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Login failed');
+      console.log('Login error caught:', error);
+      console.log('Error message:', error.message);
+      const errorMessage = error.message || 'Login failed';
+      console.log('Rejecting with:', errorMessage);
+      return rejectWithValue(errorMessage);
     }
   }
 );
@@ -141,6 +145,7 @@ const authSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
+        console.log('Login rejected, error set to:', action.payload);
       });
 
     // Logout

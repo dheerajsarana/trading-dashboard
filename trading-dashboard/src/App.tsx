@@ -12,6 +12,7 @@ import RegisterForm from './components/auth/RegisterForm';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import ThemeToggle from './components/ThemeToggle';
 import { Button } from './components/ui/button';
+import { Toaster } from './components/ui/toaster';
 
 const menus = [
   // {
@@ -153,6 +154,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <Toaster />
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<LoginForm />} />

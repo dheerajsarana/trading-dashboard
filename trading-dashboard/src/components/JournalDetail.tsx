@@ -4,6 +4,7 @@ import { updateJournal, createJournal } from '../store/journalSlice';
 import { TradeJournal } from '../types';
 import { Button } from './ui/button';
 import { Smile, BookOpen, CheckCircle, Image as ImageIcon } from 'lucide-react';
+import { useToast } from './ui/use-toast';
 
 interface JournalDetailProps {
   journal: TradeJournal | null;
@@ -12,6 +13,7 @@ interface JournalDetailProps {
 
 export default function JournalDetail({ journal, onSave }: JournalDetailProps) {
   const dispatch = useAppDispatch();
+  const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
 
@@ -104,10 +106,19 @@ export default function JournalDetail({ journal, onSave }: JournalDetailProps) {
       }
 
       setHasChanges(false);
+      toast({
+        title: 'Journal saved',
+        description: 'Your trade journal has been successfully saved.',
+        variant: 'success',
+      });
       onSave?.();
     } catch (error) {
       console.error('Failed to save journal:', error);
-      alert('Failed to save journal. Please try again.');
+      toast({
+        title: 'Save failed',
+        description: 'Failed to save journal. Please try again.',
+        variant: 'destructive',
+      });
     } finally {
       setIsSaving(false);
     }
