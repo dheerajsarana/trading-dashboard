@@ -208,7 +208,7 @@ export default function JournalPage() {
           >
             Pending
             <span className="ml-2 px-2 py-0.5 rounded-full bg-muted text-xs">
-              {stats?.statusCounts.pending || 0}
+              {stats?.statusCounts.new || 0}
             </span>
           </Button>
         </div>

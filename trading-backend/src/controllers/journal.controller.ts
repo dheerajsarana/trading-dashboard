@@ -291,26 +291,36 @@ export class JournalController {
     try {
       const userId = req.userId!;
 
-      const [total, byStatus, avgRating] = await Promise.all([
+      const [totalTrades, totalJournals, byStatus, avgRating] = await Promise.all([
+        // Count all trades (including those without journals)
+        prisma.trade.count({ where: { userId } }),
+        // Count journal entries
         prisma.tradeJournal.count({ where: { userId } }),
+        // Group journals by status
         prisma.tradeJournal.groupBy({
           by: ['status'],
           where: { userId },
           _count: true,
         }),
+        // Average rating of journals
         prisma.tradeJournal.aggregate({
           where: { userId },
           _avg: { rating: true },
         }),
       ]);
 
+      // Build status counts
       const statusCounts = byStatus.reduce((acc, item) => {
         acc[item.status] = item._count;
         return acc;
       }, {} as Record<string, number>);
 
+      // Trades without journals are counted as "new"
+      const tradesWithoutJournals = totalTrades - totalJournals;
+      statusCounts.new = (statusCounts.new || 0) + tradesWithoutJournals;
+
       res.json({
-        total,
+        total: totalTrades, // Total includes all trades
         statusCounts,
         averageRating: avgRating._avg.rating || 0,
       });

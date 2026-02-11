@@ -64,7 +64,6 @@ export default function JournalList({ journals, selectedJournalId, onSelectJourn
         if (!trade) return null;
 
         const isSelected = journal.id === selectedJournalId;
-        const isProfitable = trade.profit > 0;
 
         return (
           <button
@@ -84,10 +83,7 @@ export default function JournalList({ journals, selectedJournalId, onSelectJourn
                   <span className="text-yellow-500 text-sm font-bold">$</span>
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold">{trade.symbol}</span>
-                    {isProfitable && getStatusBadge('journaled')}
-                  </div>
+                  <span className="font-semibold">{trade.symbol}</span>
                 </div>
               </div>
               {getStatusBadge(journal.status)}
