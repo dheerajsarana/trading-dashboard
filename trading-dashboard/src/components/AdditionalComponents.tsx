@@ -140,7 +140,7 @@ export const TopSymbols: React.FC<TopSymbolsProps> = ({ symbols }) => {
       ) : (
         <div className="space-y-2">
           {symbols.map((item, index) => (
-            <div key={item.symbol} className="flex items-center justify-between p-2 border-b border last:border-0">
+            <div key={item.symbol} className="flex items-center justify-between p-2 border-b last:border-b-0">
               <div className="flex items-center gap-3">
                 <div className="text-muted-foreground text-sm w-6">#{index + 1}</div>
                 <div>
@@ -238,7 +238,7 @@ export const RecentTrades: React.FC<RecentTradesProps> = ({ trades }) => {
           {recentTrades.map((trade, index) => (
             <div
               key={index}
-              className="flex items-center justify-between p-2 mr-3 border-b border last:border-0"
+              className="flex items-center justify-between p-2 mr-3 border-b last:border-b-0"
             >
               <div className="flex items-center gap-3">
                 <div className={`px-2 py-1 rounded text-xs font-medium ${
