@@ -333,33 +333,29 @@ export default function JournalDetail({ journal, onSave }: JournalDetailProps) {
             </div>
 
             {/* Upload Component */}
-            <ErrorBoundary>
-              <ScreenshotUploader
-                tradeId={trade.id}
-                mt5TradeId={(trade as any).mt5TradeId}
-                onUploadComplete={() => {
-                  // Refresh the gallery
-                  dispatch(fetchTradeScreenshots({
-                    tradeId: trade.id,
-                    mt5TradeId: (trade as any).mt5TradeId
-                  }));
-                  // Show success message
-                  toast({
-                    title: 'Screenshots uploaded',
-                    description: 'Your screenshots have been uploaded successfully.',
-                    variant: 'success',
-                  });
-                }}
-              />
-            </ErrorBoundary>
+            <ScreenshotUploader
+              tradeId={trade.id}
+              mt5TradeId={(trade as any).mt5TradeId}
+              onUploadComplete={() => {
+                // Refresh the gallery
+                dispatch(fetchTradeScreenshots({
+                  tradeId: trade.id,
+                  mt5TradeId: (trade as any).mt5TradeId
+                }));
+                // Show success message
+                toast({
+                  title: 'Screenshots uploaded',
+                  description: 'Your screenshots have been uploaded successfully.',
+                  variant: 'success',
+                });
+              }}
+            />
 
             {/* Gallery Component */}
-            <ErrorBoundary>
-              <ScreenshotGallery
-                tradeId={trade.id}
-                mt5TradeId={(trade as any).mt5TradeId}
-              />
-            </ErrorBoundary>
+            <ScreenshotGallery
+              tradeId={trade.id}
+              mt5TradeId={(trade as any).mt5TradeId}
+            />
           </div>
         )}
       </div>
