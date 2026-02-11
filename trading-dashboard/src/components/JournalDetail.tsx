@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useAppDispatch } from '../store/hooks';
 import { updateJournal, createJournal } from '../store/journalSlice';
+import { fetchTradeScreenshots } from '../store/screenshotSlice';
 import { TradeJournal } from '../types';
 import { Button } from './ui/button';
 import { Smile, BookOpen, CheckCircle, Image as ImageIcon } from 'lucide-react';
 import { useToast } from './ui/use-toast';
+import { ScreenshotUploader, ScreenshotGallery } from './screenshots';
+import ErrorBoundary from './ErrorBoundary';
 
 interface JournalDetailProps {
   journal: TradeJournal | null;
@@ -320,18 +323,45 @@ export default function JournalDetail({ journal, onSave }: JournalDetailProps) {
         </div>
 
         {/* Screenshots */}
-        <div className="space-y-3">
-          <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-            Screenshots
-          </h3>
-          <div className="flex items-center justify-center px-6 py-12 border-2 border-dashed rounded-lg hover:border-muted-foreground transition-colors cursor-pointer">
-            <div className="text-center">
-              <ImageIcon className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
-              <p className="text-sm text-muted-foreground">Click to add images</p>
-              <p className="text-xs text-muted-foreground mt-1">PNG, JPG up to 10MB</p>
+        {trade.id && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <ImageIcon className="h-5 w-5 text-orange-400" />
+              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                Screenshots
+              </h3>
             </div>
+
+            {/* Upload Component */}
+            <ErrorBoundary>
+              <ScreenshotUploader
+                tradeId={trade.id}
+                mt5TradeId={(trade as any).mt5TradeId}
+                onUploadComplete={() => {
+                  // Refresh the gallery
+                  dispatch(fetchTradeScreenshots({
+                    tradeId: trade.id,
+                    mt5TradeId: (trade as any).mt5TradeId
+                  }));
+                  // Show success message
+                  toast({
+                    title: 'Screenshots uploaded',
+                    description: 'Your screenshots have been uploaded successfully.',
+                    variant: 'success',
+                  });
+                }}
+              />
+            </ErrorBoundary>
+
+            {/* Gallery Component */}
+            <ErrorBoundary>
+              <ScreenshotGallery
+                tradeId={trade.id}
+                mt5TradeId={(trade as any).mt5TradeId}
+              />
+            </ErrorBoundary>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

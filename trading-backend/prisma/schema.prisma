@@ -20,6 +20,7 @@ model User {
   trades       Trade[]
   stats        UserStats[]
   mt5Accounts  MT5Account[]
+  screenshots  Screenshot[]
 
   @@map("users")
 }
@@ -53,6 +54,7 @@ model Trade {
 
   // Relations
   journal    TradeJournal?
+  screenshots Screenshot[]
 
   @@index([userId])
   @@index([userId, symbol])
@@ -256,6 +258,9 @@ model MT5Trade {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
+  // Relations
+  screenshots     Screenshot[]
+
   @@index([mt5AccountId])
   @@index([userId])
   @@index([userId, time])
@@ -291,4 +296,38 @@ model MT5Position {
   @@index([mt5AccountId])
   @@index([userId])
   @@map("mt5_positions")
+}
+
+// ============================================
+// Screenshots Model
+// ============================================
+
+model Screenshot {
+  id            String    @id @default(uuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Trade Relations (one screenshot can belong to either a regular trade OR an MT5 trade)
+  tradeId       String?
+  trade         Trade?    @relation(fields: [tradeId], references: [id], onDelete: Cascade)
+
+  mt5TradeId    String?
+  mt5Trade      MT5Trade? @relation(fields: [mt5TradeId], references: [id], onDelete: Cascade)
+
+  // File Details
+  originalUrl   String    // Full-size image URL
+  thumbnailUrl  String    // Thumbnail URL (150x150)
+  fileName      String    // Original filename
+  fileSize      Int       // File size in bytes
+  mimeType      String    // Image MIME type (image/jpeg, image/png, etc.)
+
+  // Timestamps
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([tradeId])
+  @@index([mt5TradeId])
+  @@index([userId])
+  @@index([userId, createdAt])
+  @@map("screenshots")
 }

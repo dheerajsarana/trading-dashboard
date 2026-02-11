@@ -9,6 +9,7 @@ import { TradesController } from './controllers/trades.controller';
 import { StatsController } from './controllers/stats.controller';
 import { JournalController } from './controllers/journal.controller';
 import { MT5Controller } from './controllers/mt5.controller';
+import screenshotRoutes from './routes/screenshot.routes';
 
 // Load environment variables
 dotenv.config();
@@ -83,6 +84,9 @@ app.get('/api/mt5/accounts/:id/dashboard', authenticateToken, MT5Controller.getD
 app.get('/api/mt5/accounts/:id/equity', authenticateToken, MT5Controller.getEquityCurve);
 app.get('/api/mt5/accounts/:id/positions', authenticateToken, MT5Controller.getPositions);
 app.get('/api/mt5/accounts/:id/history', authenticateToken, MT5Controller.getHistory);
+
+// Screenshot routes (protected)
+app.use('/api/screenshots', screenshotRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

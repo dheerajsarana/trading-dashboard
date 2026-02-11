@@ -362,3 +362,21 @@ export interface MT5DashboardData {
   topPerformers: MT5TopPerformer[];
   monthlyPnL: MT5MonthlyPnL;
 }
+
+// ============================================
+// Screenshot Types
+// ============================================
+
+export interface Screenshot {
+  id: string;
+  tradeId?: string;
+  mt5TradeId?: string;
+  userId: string;
+  fileName: string;
+  originalUrl: string;
+  thumbnailUrl: string;
+  mimeType: string;
+  fileSize: number;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+}

@@ -3,6 +3,7 @@ import tradingReducer from './tradingSlice';
 import authReducer from './authSlice';
 import journalReducer from './journalSlice';
 import mt5Reducer from './mt5Slice';
+import screenshotReducer from './screenshotSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     auth: authReducer,
     journal: journalReducer,
     mt5: mt5Reducer,
+    screenshots: screenshotReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -29,6 +31,9 @@ export const store = configureStore({
           'journal/fetchJournalByTradeId/fulfilled',
           'journal/createJournal/fulfilled',
           'journal/updateJournal/fulfilled',
+          'screenshots/upload/pending',
+          'screenshots/upload/fulfilled',
+          'screenshots/upload/rejected',
         ],
         // Ignore these field paths in all actions
         ignoredActionPaths: [
@@ -40,9 +45,10 @@ export const store = configureStore({
           'payload.trade.closeTime',
           'payload.createdAt',
           'payload.updatedAt',
+          'meta.arg.files',
         ],
         // Ignore these paths in the state
-        ignoredPaths: ['trading.selectedDate', 'trading.allTrades', 'auth.user', 'journal.journals', 'journal.selectedJournal', 'mt5.accounts', 'mt5.dashboardData'],
+        ignoredPaths: ['trading.selectedDate', 'trading.allTrades', 'auth.user', 'journal.journals', 'journal.selectedJournal', 'mt5.accounts', 'mt5.dashboardData', 'screenshots.screenshots'],
       },
     }),
 });
