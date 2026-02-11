@@ -7,7 +7,6 @@ import { Button } from './ui/button';
 import { Smile, BookOpen, CheckCircle, Image as ImageIcon } from 'lucide-react';
 import { useToast } from './ui/use-toast';
 import { ScreenshotUploader, ScreenshotGallery } from './screenshots';
-import ErrorBoundary from './ErrorBoundary';
 
 interface JournalDetailProps {
   journal: TradeJournal | null;
