@@ -16,7 +16,7 @@ export default function LoginForm() {
   // Redirect to dashboard if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/dashboard');
+      navigate('/dashboard/analytics');
     }
   }, [isAuthenticated, navigate]);
 
@@ -36,7 +36,7 @@ export default function LoginForm() {
 
     try {
       await dispatch(loginUser({ email, password })).unwrap();
-      navigate('/dashboard');
+      navigate('/dashboard/analytics');
     } catch (err) {
       // Error is handled by Redux state
       console.error('Login failed:', err);
