@@ -6,7 +6,7 @@ import { TradeJournal } from '../../types';
 import JournalList from '../JournalList';
 import JournalDetail from '../JournalDetail';
 import { Button } from '../ui/button';
-import { BookOpen, TrendingUp, Star } from 'lucide-react';
+import { BookOpen, TrendingUp, Star, Clock } from 'lucide-react';
 
 export default function JournalPage() {
   const dispatch = useAppDispatch();
@@ -36,13 +36,11 @@ export default function JournalPage() {
     const existingJournal = journalsByTradeId.get(trade.id || '');
 
     if (existingJournal) {
-      // Trade has a journal entry, use it
       return {
         ...existingJournal,
-        trade: trade, // Ensure trade data is up to date
+        trade: trade,
       };
     } else {
-      // Trade has no journal entry, create a placeholder with "new" status
       return {
         id: trade.id || '',
         tradeId: trade.id || '',
@@ -65,21 +63,16 @@ export default function JournalPage() {
 
   // Apply filters
   const filteredJournals = tradesAsJournals.filter((journal) => {
-    // Symbol filter
     if (filters.symbol !== 'all' && journal.trade?.symbol !== filters.symbol) {
       return false;
     }
 
-    // Status filter
     if (filters.status !== 'all') {
       if (filters.status === 'pending') {
-        // "Pending" shows trades that haven't been journaled (status = 'new')
         return journal.status === 'new';
       } else if (filters.status === 'journaled') {
-        // "Journaled" shows only completed journal entries
         return journal.status === 'journaled';
       } else {
-        // Match the exact status
         return journal.status === filters.status;
       }
     }
@@ -88,14 +81,12 @@ export default function JournalPage() {
   });
 
   const handleSelectJournal = async (journal: TradeJournal) => {
-    // Fetch or create the journal for this trade
     if (journal.trade?.id) {
       await dispatch(fetchJournalByTradeId(journal.trade.id));
     }
   };
 
   const handleSave = () => {
-    // Refresh trades, journals, and stats after save
     dispatch(fetchTrades());
     dispatch(fetchJournals({}));
     dispatch(fetchJournalStats());
@@ -107,72 +98,69 @@ export default function JournalPage() {
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-3xl font-bold">Trade Journal</h1>
-            <p className="text-muted-foreground mt-1">
+            <h1 className="text-2xl font-bold tracking-tight">Trade Journal</h1>
+            <p className="text-sm text-muted-foreground mt-1">
               {stats ? `${stats.total} total entries` : 'Document your trading journey'}
             </p>
           </div>
-          <div className="flex items-center gap-4">
-            <Button variant="outline" onClick={() => setFilters({ ...filters, status: 'all' })}>
-              Live
-            </Button>
-            <Button variant="outline">
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground font-medium px-3 py-1.5 bg-muted rounded-lg">
               {filteredJournals.length} entries
-            </Button>
+            </span>
           </div>
         </div>
 
         {/* Stats Cards */}
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-card rounded-lg border p-4">
+            <div className="bg-card rounded-xl border p-4 hover:border-primary/20 transition-colors">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
-                  <BookOpen className="h-5 w-5 text-blue-500" />
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <BookOpen className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Total Entries</p>
-                  <p className="text-2xl font-bold">{stats.total}</p>
+                  <p className="text-xs text-muted-foreground font-medium">Total Entries</p>
+                  <p className="text-2xl font-bold font-mono-num">{stats.total}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-card rounded-lg border p-4">
+            <div className="bg-card rounded-xl border p-4 hover:border-profit/20 transition-colors">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
-                  <TrendingUp className="h-5 w-5 text-green-500" />
+                <div className="w-10 h-10 rounded-lg bg-profit/10 flex items-center justify-center">
+                  <TrendingUp className="h-5 w-5 text-profit" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Journaled</p>
-                  <p className="text-2xl font-bold">
+                  <p className="text-xs text-muted-foreground font-medium">Journaled</p>
+                  <p className="text-2xl font-bold font-mono-num">
                     {stats.statusCounts.journaled || 0}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-card rounded-lg border p-4">
+            <div className="bg-card rounded-xl border p-4 hover:border-gold/20 transition-colors">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center">
-                  <Star className="h-5 w-5 text-yellow-500" />
+                <div className="w-10 h-10 rounded-lg bg-gold/10 flex items-center justify-center">
+                  <Star className="h-5 w-5 text-gold" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Avg Rating</p>
-                  <p className="text-2xl font-bold">
+                  <p className="text-xs text-muted-foreground font-medium">Avg Rating</p>
+                  <p className="text-2xl font-bold font-mono-num">
                     {stats.averageRating.toFixed(1)}/10
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-card rounded-lg border p-4">
+            <div className="bg-card rounded-xl border p-4 hover:border-crypto/20 transition-colors">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
-                  <BookOpen className="h-5 w-5 text-purple-500" />
+                <div className="w-10 h-10 rounded-lg bg-crypto/10 flex items-center justify-center">
+                  <Clock className="h-5 w-5 text-crypto" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Pending</p>
-                  <p className="text-2xl font-bold">{stats.statusCounts.new || 0}</p>
+                  <p className="text-xs text-muted-foreground font-medium">Pending</p>
+                  <p className="text-2xl font-bold font-mono-num">{stats.statusCounts.new || 0}</p>
                 </div>
               </div>
             </div>
@@ -185,9 +173,10 @@ export default function JournalPage() {
             variant={filters.status === 'all' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilters({ ...filters, status: 'all' })}
+            className="h-8 text-xs"
           >
             All
-            <span className="ml-2 px-2 py-0.5 rounded-full bg-muted text-xs">
+            <span className="ml-2 px-1.5 py-0.5 rounded bg-muted text-[10px] font-mono-num">
               {filteredJournals.length}
             </span>
           </Button>
@@ -195,9 +184,10 @@ export default function JournalPage() {
             variant={filters.status === 'journaled' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilters({ ...filters, status: 'journaled' })}
+            className="h-8 text-xs"
           >
             Journaled
-            <span className="ml-2 px-2 py-0.5 rounded-full bg-muted text-xs">
+            <span className="ml-2 px-1.5 py-0.5 rounded bg-muted text-[10px] font-mono-num">
               {stats?.statusCounts.journaled || 0}
             </span>
           </Button>
@@ -205,9 +195,10 @@ export default function JournalPage() {
             variant={filters.status === 'pending' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilters({ ...filters, status: 'pending' })}
+            className="h-8 text-xs"
           >
             Pending
-            <span className="ml-2 px-2 py-0.5 rounded-full bg-muted text-xs">
+            <span className="ml-2 px-1.5 py-0.5 rounded bg-muted text-[10px] font-mono-num">
               {stats?.statusCounts.new || 0}
             </span>
           </Button>
@@ -217,7 +208,7 @@ export default function JournalPage() {
       {/* Main Content - Two Column Layout */}
       <div className="grid grid-cols-12 gap-6 h-[calc(100%+11rem)]">
         {/* Left Sidebar - Journal List */}
-        <div className="col-span-12 md:col-span-4 bg-card rounded-lg border p-4 overflow-y-auto">
+        <div className="col-span-12 md:col-span-4 bg-card rounded-xl border p-4 overflow-y-auto">
           <JournalList
             journals={filteredJournals}
             selectedJournalId={selectedJournal?.id || null}
@@ -227,7 +218,7 @@ export default function JournalPage() {
         </div>
 
         {/* Right Panel - Journal Detail */}
-        <div className="col-span-12 md:col-span-8 bg-card rounded-lg border overflow-hidden min-h-0">
+        <div className="col-span-12 md:col-span-8 bg-card rounded-xl border overflow-hidden min-h-0">
           <JournalDetail journal={selectedJournal} onSave={handleSave} />
         </div>
       </div>

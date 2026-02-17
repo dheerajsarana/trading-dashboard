@@ -1,5 +1,5 @@
 import { Trade } from '../types';
-import { Trash2 } from 'lucide-react';
+import { Trash2, TrendingUp, TrendingDown, Pencil, Upload, Zap } from 'lucide-react';
 import { Button } from './ui/button';
 
 interface TradesTableProps {
@@ -7,6 +7,17 @@ interface TradesTableProps {
   onDeleteTrade?: (tradeId: string) => void;
   isLoading?: boolean;
 }
+
+const getSymbolCategory = (symbol: string): { color: string; bg: string; label: string } => {
+  const s = symbol.toUpperCase();
+  if (s.includes('BTC') || s.includes('ETH') || s.includes('SOL') || s.includes('BNB') || s.includes('XRP')) {
+    return { color: 'text-crypto', bg: 'bg-crypto/10', label: 'C' };
+  }
+  if (s.includes('XAU') || s.includes('XAG') || s.includes('GOLD') || s.includes('SILVER')) {
+    return { color: 'text-metal', bg: 'bg-metal/10', label: 'M' };
+  }
+  return { color: 'text-forex', bg: 'bg-forex/10', label: 'F' };
+};
 
 export default function TradesTable({ trades, onDeleteTrade, isLoading }: TradesTableProps) {
   const formatDate = (date: Date) => {
@@ -20,63 +31,33 @@ export default function TradesTable({ trades, onDeleteTrade, isLoading }: Trades
     });
   };
 
-  const formatPrice = (price: number) => {
-    return `$${price.toFixed(2)}`;
-  };
-
-  const getTypeColor = (type: string) => {
-    return type === 'buy' ? 'text-blue-400' : 'text-orange-400';
-  };
-
-  const getPnLColor = (profit: number) => {
-    if (profit > 0) return 'text-green-500';
-    if (profit < 0) return 'text-red-500';
-    return 'text-gray-400';
-  };
-
-  const getSourceBadge = (source: string) => {
-    if (source === 'manual') {
-      return (
-        <span className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-md bg-purple-500/10 text-purple-400 border border-purple-500/20">
-          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-          </svg>
-          Manual
-        </span>
-      );
-    }
-    if (source === 'mt5') {
-      return (
-        <span className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-md bg-green-500/10 text-green-400 border border-green-500/20">
-          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-          MT5
-        </span>
-      );
-    }
-    return (
-      <span className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20">
-        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-        </svg>
-        Upload
-      </span>
-    );
-  };
+  const formatPrice = (price: number) => `$${price.toFixed(2)}`;
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+      <div className="py-16 space-y-3">
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="flex gap-4 px-4">
+            <div className="skeleton h-5 w-32" />
+            <div className="skeleton h-5 w-20" />
+            <div className="skeleton h-5 w-16" />
+            <div className="skeleton h-5 w-24" />
+            <div className="skeleton h-5 w-24" />
+            <div className="skeleton h-5 w-12" />
+            <div className="skeleton h-5 w-20" />
+          </div>
+        ))}
       </div>
     );
   }
 
   if (trades.length === 0) {
     return (
-      <div className="text-center py-12 text-gray-400">
-        <p>No trades found</p>
+      <div className="text-center py-16">
+        <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto mb-3">
+          <TrendingUp className="h-5 w-5 text-muted-foreground" />
+        </div>
+        <p className="text-sm text-muted-foreground">No trades found</p>
       </div>
     );
   }
@@ -85,106 +66,124 @@ export default function TradesTable({ trades, onDeleteTrade, isLoading }: Trades
     <div className="overflow-x-auto">
       <table className="w-full">
         <thead>
-          <tr className="border-b border-gray-800">
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+          <tr className="border-b">
+            <th className="px-4 py-3 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               Date
             </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+            <th className="px-4 py-3 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               Symbol
             </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+            <th className="px-4 py-3 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               Type
             </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+            <th className="px-4 py-3 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               Entry
             </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+            <th className="px-4 py-3 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               Exit
             </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+            <th className="px-4 py-3 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               Size
             </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+            <th className="px-4 py-3 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               P&L
             </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+            <th className="px-4 py-3 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               Source
             </th>
             {onDeleteTrade && (
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                Actions
+              <th className="px-4 py-3 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                <span className="sr-only">Actions</span>
               </th>
             )}
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-800">
-          {trades.map((trade: any, index) => (
-            <tr key={trade.id || index} className="hover:bg-gray-900/50 transition-colors">
-              <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-300">
-                {formatDate(trade.closeTime)}
-              </td>
-              <td className="px-4 py-4 whitespace-nowrap">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-yellow-500/20 flex items-center justify-center">
-                    <span className="text-yellow-500 text-xs">$</span>
+        <tbody className="divide-y divide-border">
+          {trades.map((trade: any, index) => {
+            const category = getSymbolCategory(trade.symbol);
+            const isProfit = trade.profit > 0;
+            const isLoss = trade.profit < 0;
+
+            return (
+              <tr key={trade.id || index} className="table-row-hover group">
+                <td className="px-4 py-3.5 whitespace-nowrap text-sm text-muted-foreground">
+                  {formatDate(trade.closeTime)}
+                </td>
+                <td className="px-4 py-3.5 whitespace-nowrap">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-7 h-7 rounded-md ${category.bg} flex items-center justify-center`}>
+                      <span className={`text-[10px] font-bold ${category.color}`}>{category.label}</span>
+                    </div>
+                    <span className="text-sm font-semibold">{trade.symbol}</span>
                   </div>
-                  <span className="text-sm font-medium text-white">{trade.symbol}</span>
-                </div>
-              </td>
-              <td className="px-4 py-4 whitespace-nowrap">
-                <span className={`inline-flex items-center gap-1 text-sm font-medium ${getTypeColor(trade.type)}`}>
-                  {trade.type === 'buy' ? (
-                    <>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                      </svg>
-                      Long
-                    </>
+                </td>
+                <td className="px-4 py-3.5 whitespace-nowrap">
+                  <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-md ${
+                    trade.type === 'buy'
+                      ? 'text-profit bg-profit/10'
+                      : 'text-loss bg-loss/10'
+                  }`}>
+                    {trade.type === 'buy' ? (
+                      <TrendingUp className="w-3 h-3" />
+                    ) : (
+                      <TrendingDown className="w-3 h-3" />
+                    )}
+                    {trade.type === 'buy' ? 'Long' : 'Short'}
+                  </span>
+                </td>
+                <td className="px-4 py-3.5 whitespace-nowrap text-sm font-mono-num text-muted-foreground">
+                  {formatPrice(trade.openPrice)}
+                </td>
+                <td className="px-4 py-3.5 whitespace-nowrap text-sm font-mono-num text-muted-foreground">
+                  {formatPrice(trade.closePrice)}
+                </td>
+                <td className="px-4 py-3.5 whitespace-nowrap text-sm font-mono-num text-muted-foreground">
+                  {trade.volume.toFixed(2)}
+                </td>
+                <td className="px-4 py-3.5 whitespace-nowrap">
+                  <span className={`text-sm font-semibold font-mono-num ${
+                    isProfit ? 'text-profit' : isLoss ? 'text-loss' : 'text-muted-foreground'
+                  }`}>
+                    {isProfit && '+'}${trade.profit.toFixed(2)}
+                  </span>
+                </td>
+                <td className="px-4 py-3.5 whitespace-nowrap">
+                  {trade.source === 'manual' ? (
+                    <span className="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-medium rounded-md bg-crypto/10 text-crypto border border-crypto/20">
+                      <Pencil className="w-3 h-3" />
+                      Manual
+                    </span>
+                  ) : trade.source === 'mt5' ? (
+                    <span className="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-medium rounded-md bg-profit/10 text-profit border border-profit/20">
+                      <Zap className="w-3 h-3" />
+                      MT5
+                    </span>
                   ) : (
-                    <>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
-                      </svg>
-                      Short
-                    </>
-                  )}
-                </span>
-              </td>
-              <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-300">
-                {formatPrice(trade.openPrice)}
-              </td>
-              <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-300">
-                {formatPrice(trade.closePrice)}
-              </td>
-              <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-300">
-                {trade.volume.toFixed(2)}
-              </td>
-              <td className="px-4 py-4 whitespace-nowrap">
-                <span className={`text-sm font-semibold ${getPnLColor(trade.profit)}`}>
-                  {trade.profit > 0 && '+'}${trade.profit.toFixed(2)}
-                </span>
-              </td>
-              <td className="px-4 py-4 whitespace-nowrap">
-                {getSourceBadge(trade.source || 'upload')}
-              </td>
-              {onDeleteTrade && (
-                <td className="px-4 py-4 whitespace-nowrap">
-                  {trade.source !== 'mt5' ? (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => onDeleteTrade(trade.id)}
-                      className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  ) : (
-                    <span className="text-xs text-muted-foreground">Synced</span>
+                    <span className="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-medium rounded-md bg-forex/10 text-forex border border-forex/20">
+                      <Upload className="w-3 h-3" />
+                      Upload
+                    </span>
                   )}
                 </td>
-              )}
-            </tr>
-          ))}
+                {onDeleteTrade && (
+                  <td className="px-4 py-3.5 whitespace-nowrap">
+                    {trade.source !== 'mt5' ? (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onDeleteTrade(trade.id)}
+                        className="h-8 w-8 p-0 text-muted-foreground hover:text-loss hover:bg-loss/10 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    ) : (
+                      <span className="text-[11px] text-muted-foreground">Synced</span>
+                    )}
+                  </td>
+                )}
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

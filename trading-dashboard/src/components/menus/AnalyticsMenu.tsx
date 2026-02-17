@@ -215,7 +215,7 @@ const AnalyticsMenu = () => {
         )}
 
         {!isLoading && allTrades.length > 0 && (
-            <div className="container py-6 space-y-6">
+            <div className="container py-6 space-y-8">
                 {/* Filters */}
                 <Card className="bg-card border">
                     <CardContent className="pt-6">
@@ -295,13 +295,13 @@ const AnalyticsMenu = () => {
 
                 {/* Overview Section */}
                 <section id="overview">
-                    <h2 className="text-2xl font-bold mb-4">Overview</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <h2 className="text-lg font-bold tracking-tight mb-4">Overview</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 stagger-in">
                         <MetricCard
                             title="Total P&L"
                             value={`$${apiStats.totalPnL.toFixed(2)}`}
                             subtitle={`From ${apiStats.totalTrades} closed trades`}
-                            valueColor={apiStats.totalPnL >= 0 ? 'text-green-500' : 'text-red-500'}
+                            valueColor={apiStats.totalPnL >= 0 ? 'text-profit' : 'text-loss'}
                             icon={
                                 apiStats.totalPnL >= 0 ? (
                                     <TrendingUp className="h-6 w-6" />
@@ -314,7 +314,7 @@ const AnalyticsMenu = () => {
                             title="Win Rate"
                             value={`${apiStats.winRate.toFixed(1)}%`}
                             subtitle={`${apiStats.wins} wins • ${apiStats.losses} losses`}
-                            valueColor={apiStats.winRate >= 50 ? 'text-green-500' : 'text-red-500'}
+                            valueColor={apiStats.winRate >= 50 ? 'text-profit' : 'text-loss'}
                             icon={
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -326,7 +326,7 @@ const AnalyticsMenu = () => {
                             title="Profit Factor"
                             value={apiStats.profitFactor.toFixed(2)}
                             subtitle={apiStats.profitFactor >= 1.5 ? 'Good' : 'Needs work'}
-                            valueColor={apiStats.profitFactor >= 1.5 ? 'text-green-500' : 'text-red-500'}
+                            valueColor={apiStats.profitFactor >= 1.5 ? 'text-profit' : 'text-loss'}
                             icon={
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -338,7 +338,7 @@ const AnalyticsMenu = () => {
                             title="Expectancy"
                             value={`$${apiStats.expectancy.toFixed(2)}`}
                             subtitle="Average per trade"
-                            valueColor={apiStats.expectancy >= 0 ? 'text-blue-500' : 'text-red-500'}
+                            valueColor={apiStats.expectancy >= 0 ? 'text-primary' : 'text-loss'}
                             icon={
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
@@ -351,7 +351,7 @@ const AnalyticsMenu = () => {
 
                 {/* Performance Section */}
                 <section id="performance">
-                    <h2 className="text-2xl font-bold mb-4">Performance Charts</h2>
+                    <h2 className="text-lg font-bold tracking-tight mb-4">Performance Charts</h2>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                         <div className="lg:col-span-2">
                             <EquityCurve data={equityCurve || []} />
@@ -371,7 +371,7 @@ const AnalyticsMenu = () => {
 
                 {/* Analytics Section */}
                 <section id="analytics">
-                    <h2 className="text-2xl font-bold mb-4">Detailed Analytics</h2>
+                    <h2 className="text-lg font-bold tracking-tight mb-4">Detailed Analytics</h2>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                         <LongShortStats
                             longTrades={apiStats.longTrades}
@@ -388,7 +388,7 @@ const AnalyticsMenu = () => {
 
                 {/* Calendar Section */}
                 <section id="calendar">
-                    <h2 className="text-2xl font-bold mb-4">Trading Calendar</h2>
+                    <h2 className="text-lg font-bold tracking-tight mb-4">Trading Calendar</h2>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         <TradingCalendar
                             trades={displayTrades}
@@ -410,7 +410,7 @@ const AnalyticsMenu = () => {
 
                 {/* Advanced Analytics */}
                 <section id="advanced">
-                    <h2 className="text-2xl font-bold mb-4">Advanced Analytics</h2>
+                    <h2 className="text-lg font-bold tracking-tight mb-4">Advanced Analytics</h2>
 
                     <div id="drawdown" className="mb-6">
                         <DrawdownIntelligence stats={drawdownStats} />

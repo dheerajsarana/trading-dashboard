@@ -61,7 +61,7 @@ export default function TradesPage() {
   }, [fetchTrades]);
 
   const handleFilterChange = async (newFilters: TradeFiltersState) => {
-    setFilters({ ...newFilters, page: 1 }); // Reset to page 1 when filters change
+    setFilters({ ...newFilters, page: 1 });
 
     const params: any = {
       page: 1,
@@ -164,7 +164,7 @@ export default function TradesPage() {
   };
 
   const handleModalSuccess = async () => {
-    await fetchTrades(); // Refresh trades after adding new trade
+    await fetchTrades();
   };
 
   return (
@@ -172,26 +172,26 @@ export default function TradesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Trades</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-2xl font-bold tracking-tight">Trades</h1>
+          <p className="text-sm text-muted-foreground mt-1">
             {pagination ? `${pagination.total} total trades` : 'Manage your trading history'}
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2">
+          <Button onClick={() => setIsModalOpen(true)}>
+            <Plus className="h-4 w-4 mr-1.5" />
+            Add Trade
+          </Button>
           {allTrades.length > 0 && (
             <Button
               variant="outline"
+              size="sm"
               onClick={handleDeleteAllTrades}
-              className="text-red-400 hover:text-red-300 border-red-500/30 hover:border-red-500/50"
+              className="text-loss/70 hover:text-loss border-loss/20 hover:border-loss/40 hover:bg-loss/5"
             >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete All
+              <Trash2 className="h-3.5 w-3.5" />
             </Button>
           )}
-          <Button onClick={() => setIsModalOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Trade
-          </Button>
         </div>
       </div>
 
@@ -203,7 +203,7 @@ export default function TradesPage() {
       />
 
       {/* Trades Table */}
-      <div className="bg-card rounded-lg border">
+      <div className="bg-card rounded-xl border">
         <TradesTable
           trades={allTrades}
           onDeleteTrade={handleDeleteTrade}
@@ -212,19 +212,19 @@ export default function TradesPage() {
 
         {/* Pagination */}
         {pagination && pagination.totalPages > 1 && (
-          <div className="px-4 py-4 border-t flex items-center justify-between">
-            <div className="text-sm text-muted-foreground">
-              Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} trades
+          <div className="px-4 py-3.5 border-t flex items-center justify-between">
+            <div className="text-xs text-muted-foreground font-mono-num">
+              {((pagination.page - 1) * pagination.limit) + 1}–{Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => handlePageChange(pagination.page - 1)}
                 disabled={pagination.page === 1 || isLoading}
+                className="h-8 px-2"
               >
-                <ChevronLeft className="h-4 w-4" />
-                Previous
+                <ChevronLeft className="h-3.5 w-3.5" />
               </Button>
               <div className="flex items-center gap-1">
                 {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
@@ -242,11 +242,11 @@ export default function TradesPage() {
                   return (
                     <Button
                       key={pageNum}
-                      variant={pagination.page === pageNum ? 'default' : 'outline'}
+                      variant={pagination.page === pageNum ? 'default' : 'ghost'}
                       size="sm"
                       onClick={() => handlePageChange(pageNum)}
                       disabled={isLoading}
-                      className="w-10"
+                      className="h-8 w-8 p-0 text-xs font-mono-num"
                     >
                       {pageNum}
                     </Button>
@@ -258,9 +258,9 @@ export default function TradesPage() {
                 size="sm"
                 onClick={() => handlePageChange(pagination.page + 1)}
                 disabled={pagination.page === pagination.totalPages || isLoading}
+                className="h-8 px-2"
               >
-                Next
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-3.5 w-3.5" />
               </Button>
             </div>
           </div>

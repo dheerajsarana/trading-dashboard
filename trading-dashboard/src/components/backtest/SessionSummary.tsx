@@ -38,40 +38,40 @@ const SessionSummary = () => {
   }
 
   const stats = [
-    { label: 'Total P&L', value: `${summary.totalPnL >= 0 ? '+' : ''}$${summary.totalPnL.toFixed(2)}`, color: summary.totalPnL >= 0 ? 'text-green-500' : 'text-red-500', icon: TrendingUp },
-    { label: 'Win Rate', value: `${summary.winRate.toFixed(1)}%`, color: summary.winRate >= 50 ? 'text-green-500' : 'text-red-500', icon: Target },
-    { label: 'Profit Factor', value: summary.profitFactor === Infinity ? '∞' : summary.profitFactor.toFixed(2), color: summary.profitFactor >= 1 ? 'text-green-500' : 'text-red-500', icon: BarChart3 },
+    { label: 'Total P&L', value: `${summary.totalPnL >= 0 ? '+' : ''}$${summary.totalPnL.toFixed(2)}`, color: summary.totalPnL >= 0 ? 'text-profit' : 'text-loss', icon: TrendingUp },
+    { label: 'Win Rate', value: `${summary.winRate.toFixed(1)}%`, color: summary.winRate >= 50 ? 'text-profit' : 'text-loss', icon: Target },
+    { label: 'Profit Factor', value: summary.profitFactor === Infinity ? '\u221E' : summary.profitFactor.toFixed(2), color: summary.profitFactor >= 1 ? 'text-profit' : 'text-loss', icon: BarChart3 },
     { label: 'Total Trades', value: summary.totalTrades.toString(), color: 'text-foreground', icon: Trophy },
     { label: 'Wins / Losses', value: `${summary.wins} / ${summary.losses}`, color: 'text-foreground', icon: TrendingUp },
-    { label: 'Max Drawdown', value: `$${summary.maxDrawdown.toFixed(2)}`, color: 'text-red-500', icon: TrendingDown },
-    { label: 'Avg Win', value: `+$${summary.avgWin.toFixed(2)}`, color: 'text-green-500', icon: TrendingUp },
-    { label: 'Avg Loss', value: `-$${summary.avgLoss.toFixed(2)}`, color: 'text-red-500', icon: TrendingDown },
-    { label: 'Best Trade', value: `+$${summary.bestTrade.toFixed(2)}`, color: 'text-green-500', icon: TrendingUp },
-    { label: 'Worst Trade', value: `$${summary.worstTrade.toFixed(2)}`, color: 'text-red-500', icon: TrendingDown },
+    { label: 'Max Drawdown', value: `$${summary.maxDrawdown.toFixed(2)}`, color: 'text-loss', icon: TrendingDown },
+    { label: 'Avg Win', value: `+$${summary.avgWin.toFixed(2)}`, color: 'text-profit', icon: TrendingUp },
+    { label: 'Avg Loss', value: `-$${summary.avgLoss.toFixed(2)}`, color: 'text-loss', icon: TrendingDown },
+    { label: 'Best Trade', value: `+$${summary.bestTrade.toFixed(2)}`, color: 'text-profit', icon: TrendingUp },
+    { label: 'Worst Trade', value: `$${summary.worstTrade.toFixed(2)}`, color: 'text-loss', icon: TrendingDown },
   ];
 
   return (
     <div className="bg-card border rounded-xl p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-lg font-bold">Session Complete</h2>
+          <h2 className="text-lg font-bold tracking-tight">Session Complete</h2>
           <p className="text-sm text-muted-foreground">
             {activeSession?.symbol} | {activeSession?.timeframe} | {closedTrades.length} trades
           </p>
         </div>
-        <div className={`text-3xl font-bold font-mono ${summary.totalPnL >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+        <div className={`text-3xl font-bold font-mono-num ${summary.totalPnL >= 0 ? 'text-profit' : 'text-loss'}`}>
           {summary.totalPnL >= 0 ? '+' : ''}${summary.totalPnL.toFixed(2)}
         </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
         {stats.map(({ label, value, color, icon: Icon }) => (
-          <div key={label} className="bg-background rounded-lg p-3 border">
+          <div key={label} className="bg-secondary/50 rounded-lg p-3 border">
             <div className="flex items-center gap-1 mb-1">
               <Icon className="h-3 w-3 text-muted-foreground" />
-              <p className="text-xs text-muted-foreground">{label}</p>
+              <p className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">{label}</p>
             </div>
-            <p className={`text-sm font-bold font-mono ${color}`}>{value}</p>
+            <p className={`text-sm font-bold font-mono-num ${color}`}>{value}</p>
           </div>
         ))}
       </div>
@@ -80,7 +80,6 @@ const SessionSummary = () => {
         <Button
           onClick={handleSave}
           disabled={isSaving || saved}
-          className="bg-blue-600 hover:bg-blue-700 text-white"
         >
           {isSaving ? (
             <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Saving...</>

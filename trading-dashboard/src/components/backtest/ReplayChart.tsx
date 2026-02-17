@@ -28,9 +28,10 @@ const ReplayChart = () => {
     if (!containerRef.current) return;
 
     const isDark = document.documentElement.classList.contains('dark');
-    const bgColor = isDark ? '#1a1a2e' : '#ffffff';
-    const textColor = isDark ? '#d1d5db' : '#374151';
-    const gridColor = isDark ? '#2d2d44' : '#e5e7eb';
+    const style = getComputedStyle(document.documentElement);
+    const bgColor = isDark ? 'hsl(' + style.getPropertyValue('--card').trim() + ')' : 'hsl(' + style.getPropertyValue('--card').trim() + ')';
+    const textColor = isDark ? 'hsl(' + style.getPropertyValue('--muted-foreground').trim() + ')' : 'hsl(' + style.getPropertyValue('--foreground').trim() + ')';
+    const gridColor = isDark ? 'hsl(' + style.getPropertyValue('--border').trim() + ')' : 'hsl(' + style.getPropertyValue('--border').trim() + ')';
 
     const chart = createChart(containerRef.current, {
       layout: {

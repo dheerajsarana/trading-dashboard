@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Trade } from '../types';
 import { getTradesByDate } from '../utils/statistics';
+import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface TradingCalendarProps {
   trades: Trade[];
@@ -35,7 +36,7 @@ const TradingCalendar: React.FC<TradingCalendarProps> = ({ trades, onDateSelect 
   const handleDateClick = (day: number) => {
     const date = new Date(year, month, day);
     const tradesOnDate = getTradesByDate(trades, date);
-    
+
     if (tradesOnDate.length > 0) {
       setSelectedDate(date);
       onDateSelect(date);
@@ -53,6 +54,18 @@ const TradingCalendar: React.FC<TradingCalendarProps> = ({ trades, onDateSelect 
     return getTradesByDate(trades, date).length > 0;
   };
 
+  const isFutureDay = (day: number): boolean => {
+    const date = new Date(year, month, day);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return date > today;
+  };
+
+  const isToday = (day: number): boolean => {
+    const today = new Date();
+    return day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+  };
+
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
@@ -68,8 +81,10 @@ const TradingCalendar: React.FC<TradingCalendarProps> = ({ trades, onDateSelect 
   for (let day = 1; day <= daysInMonth; day++) {
     const pnl = getDayPnL(day);
     const hasTradesOnDay = hasTrades(day);
-    const isSelected = selectedDate?.getDate() === day && 
-                       selectedDate?.getMonth() === month && 
+    const future = isFutureDay(day);
+    const today = isToday(day);
+    const isSelected = selectedDate?.getDate() === day &&
+                       selectedDate?.getMonth() === month &&
                        selectedDate?.getFullYear() === year;
 
     days.push(
@@ -77,16 +92,19 @@ const TradingCalendar: React.FC<TradingCalendarProps> = ({ trades, onDateSelect 
         key={day}
         onClick={() => hasTradesOnDay && handleDateClick(day)}
         className={`
-          aspect-square border border rounded-lg flex flex-col items-center justify-center
-          ${hasTradesOnDay ? 'cursor-pointer hover:border-blue-500' : 'opacity-50'}
-          ${isSelected ? 'border-blue-500 bg-blue-500/10' : ''}
-          ${pnl > 0 ? 'bg-green-900/20' : pnl < 0 ? 'bg-red-900/20' : ''}
+          aspect-square border rounded-lg flex flex-col items-center justify-center transition-all duration-150
+          ${hasTradesOnDay ? 'cursor-pointer hover:border-primary/50' : ''}
+          ${future ? 'opacity-25 border-dashed' : ''}
+          ${!hasTradesOnDay && !future ? 'opacity-60' : ''}
+          ${isSelected ? 'border-primary bg-primary/10 ring-1 ring-primary/30' : ''}
+          ${pnl > 0 ? 'bg-profit/8 border-profit/20' : pnl < 0 ? 'bg-loss/8 border-loss/20' : ''}
+          ${today ? 'ring-1 ring-primary/40' : ''}
         `}
       >
-        <div className="text-sm">{day}</div>
+        <div className={`text-xs font-medium ${today ? 'text-primary' : ''}`}>{day}</div>
         {hasTradesOnDay && (
-          <div className={`text-xs ${pnl > 0 ? 'text-green-500' : 'text-red-500'}`}>
-            ${pnl.toFixed(2)}
+          <div className={`text-[10px] font-mono-num font-semibold ${pnl > 0 ? 'text-profit' : 'text-loss'}`}>
+            {pnl > 0 ? '+' : ''}${pnl.toFixed(0)}
           </div>
         )}
       </div>
@@ -96,36 +114,30 @@ const TradingCalendar: React.FC<TradingCalendarProps> = ({ trades, onDateSelect 
   return (
     <div className="bg-card border rounded-xl p-6">
       <div className="flex items-center gap-2 mb-4">
-        <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-        <h3 className="font-semibold">Trading Calendar</h3>
+        <Calendar className="w-5 h-5 text-primary/60" />
+        <h3 className="text-lg font-bold tracking-tight">Trading Calendar</h3>
       </div>
-      <p className="text-muted-foreground text-sm mb-4">Daily P&L heatmap - Click on days to see trades</p>
+      <p className="text-muted-foreground text-xs mb-4">Daily P&L heatmap — click on days to see trades</p>
 
       <div className="flex items-center justify-between mb-4">
-        <button onClick={previousMonth} className="p-2 hover:bg-muted rounded">
-          <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
+        <button onClick={previousMonth} className="p-1.5 hover:bg-muted rounded-lg transition-colors">
+          <ChevronLeft className="w-4 h-4 text-muted-foreground" />
         </button>
-        <div className="font-semibold">{monthNames[month]} {year}</div>
-        <button onClick={nextMonth} className="p-2 hover:bg-muted rounded">
-          <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
+        <div className="text-sm font-semibold">{monthNames[month]} {year}</div>
+        <button onClick={nextMonth} className="p-1.5 hover:bg-muted rounded-lg transition-colors">
+          <ChevronRight className="w-4 h-4 text-muted-foreground" />
         </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-2 mb-2">
+      <div className="grid grid-cols-7 gap-1.5 mb-2">
         {dayNames.map(day => (
-          <div key={day} className="text-center text-muted-foreground text-xs font-medium">
+          <div key={day} className="text-center text-muted-foreground text-[10px] font-semibold uppercase tracking-wider">
             {day}
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-7 gap-1.5">
         {days}
       </div>
     </div>

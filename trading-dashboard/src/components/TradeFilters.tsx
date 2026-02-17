@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { TradeFiltersState } from '../types';
 import { Button } from './ui/button';
-import { Filter, X } from 'lucide-react';
+import { Filter, X, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface TradeFiltersProps {
   availableSymbols: string[];
@@ -59,13 +59,13 @@ export default function TradeFilters({ availableSymbols, onFilterChange, initial
   };
 
   return (
-    <div className="bg-gray-900 rounded-lg border border-gray-800 p-4">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-card rounded-xl border p-4">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Filter className="h-5 w-5 text-gray-400" />
-          <h3 className="text-lg font-semibold text-white">Filters</h3>
+          <Filter className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm font-medium">Filters</span>
           {hasActiveFilters && (
-            <span className="px-2 py-1 text-xs bg-blue-500/20 text-blue-400 rounded-md border border-blue-500/30">
+            <span className="px-1.5 py-0.5 text-[10px] font-semibold bg-primary/10 text-primary rounded">
               Active
             </span>
           )}
@@ -76,54 +76,52 @@ export default function TradeFilters({ availableSymbols, onFilterChange, initial
               variant="ghost"
               size="sm"
               onClick={handleResetFilters}
-              className="text-gray-400 hover:text-white"
+              className="h-7 text-xs text-muted-foreground hover:text-foreground"
             >
-              <X className="h-4 w-4 mr-1" />
+              <X className="h-3 w-3 mr-1" />
               Clear
             </Button>
           )}
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
             onClick={() => setIsExpanded(!isExpanded)}
+            className="h-7 text-xs"
           >
-            {isExpanded ? 'Collapse' : 'Expand'}
+            {isExpanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
           </Button>
         </div>
       </div>
 
       {isExpanded && (
-        <div className="space-y-4 pt-4 border-t border-gray-800">
-          {/* Row 1: Symbol and Type */}
+        <div className="space-y-4 pt-4 mt-4 border-t">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="symbol-filter" className="text-sm font-medium text-gray-300">
+            <div className="space-y-1.5">
+              <label htmlFor="symbol-filter" className="text-xs font-medium text-muted-foreground">
                 Symbol
               </label>
               <select
                 id="symbol-filter"
                 value={tempFilters.symbol}
                 onChange={(e) => setTempFilters(prev => ({ ...prev, symbol: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-700 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-base"
               >
                 <option value="all">All Symbols</option>
                 {availableSymbols.map(symbol => (
-                  <option key={symbol} value={symbol}>
-                    {symbol}
-                  </option>
+                  <option key={symbol} value={symbol}>{symbol}</option>
                 ))}
               </select>
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="type-filter" className="text-sm font-medium text-gray-300">
+            <div className="space-y-1.5">
+              <label htmlFor="type-filter" className="text-xs font-medium text-muted-foreground">
                 Type
               </label>
               <select
                 id="type-filter"
                 value={tempFilters.type}
                 onChange={(e) => setTempFilters(prev => ({ ...prev, type: e.target.value as 'all' | 'buy' | 'sell' }))}
-                className="w-full px-3 py-2 border border-gray-700 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-base"
               >
                 <option value="all">All Types</option>
                 <option value="buy">Long (Buy)</option>
@@ -131,15 +129,15 @@ export default function TradeFilters({ availableSymbols, onFilterChange, initial
               </select>
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="source-filter" className="text-sm font-medium text-gray-300">
+            <div className="space-y-1.5">
+              <label htmlFor="source-filter" className="text-xs font-medium text-muted-foreground">
                 Source
               </label>
               <select
                 id="source-filter"
                 value={tempFilters.source}
                 onChange={(e) => setTempFilters(prev => ({ ...prev, source: e.target.value as 'all' | 'manual' | 'upload' | 'mt5' }))}
-                className="w-full px-3 py-2 border border-gray-700 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-base"
               >
                 <option value="all">All Sources</option>
                 <option value="manual">Manual</option>
@@ -148,15 +146,15 @@ export default function TradeFilters({ availableSymbols, onFilterChange, initial
               </select>
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="limit-filter" className="text-sm font-medium text-gray-300">
+            <div className="space-y-1.5">
+              <label htmlFor="limit-filter" className="text-xs font-medium text-muted-foreground">
                 Per Page
               </label>
               <select
                 id="limit-filter"
                 value={tempFilters.limit}
                 onChange={(e) => setTempFilters(prev => ({ ...prev, limit: parseInt(e.target.value) }))}
-                className="w-full px-3 py-2 border border-gray-700 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-base"
               >
                 <option value="10">10</option>
                 <option value="25">25</option>
@@ -166,10 +164,9 @@ export default function TradeFilters({ availableSymbols, onFilterChange, initial
             </div>
           </div>
 
-          {/* Row 2: Date Range */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="start-date" className="text-sm font-medium text-gray-300">
+            <div className="space-y-1.5">
+              <label htmlFor="start-date" className="text-xs font-medium text-muted-foreground">
                 Start Date
               </label>
               <input
@@ -177,12 +174,12 @@ export default function TradeFilters({ availableSymbols, onFilterChange, initial
                 type="date"
                 value={tempFilters.dateRange.start ? tempFilters.dateRange.start.toISOString().split('T')[0] : ''}
                 onChange={(e) => handleDateChange('start', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-700 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-base"
               />
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="end-date" className="text-sm font-medium text-gray-300">
+            <div className="space-y-1.5">
+              <label htmlFor="end-date" className="text-xs font-medium text-muted-foreground">
                 End Date
               </label>
               <input
@@ -190,48 +187,42 @@ export default function TradeFilters({ availableSymbols, onFilterChange, initial
                 type="date"
                 value={tempFilters.dateRange.end ? tempFilters.dateRange.end.toISOString().split('T')[0] : ''}
                 onChange={(e) => handleDateChange('end', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-700 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-base"
               />
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex gap-3 pt-2">
-            <Button
-              onClick={handleApplyFilters}
-              className="flex-1"
-            >
-              Apply Filters
-            </Button>
-          </div>
+          <Button onClick={handleApplyFilters} className="w-full">
+            Apply Filters
+          </Button>
         </div>
       )}
 
       {/* Active Filters Summary (when collapsed) */}
       {!isExpanded && hasActiveFilters && (
-        <div className="flex flex-wrap gap-2 pt-2">
+        <div className="flex flex-wrap gap-1.5 pt-3 mt-3 border-t">
           {filters.symbol !== 'all' && (
-            <span className="px-2 py-1 text-xs bg-gray-800 text-gray-300 rounded-md border border-gray-700">
-              Symbol: {filters.symbol}
+            <span className="px-2 py-1 text-[11px] font-medium bg-muted text-foreground rounded-md">
+              {filters.symbol}
             </span>
           )}
           {filters.type !== 'all' && (
-            <span className="px-2 py-1 text-xs bg-gray-800 text-gray-300 rounded-md border border-gray-700">
-              Type: {filters.type === 'buy' ? 'Long' : 'Short'}
+            <span className="px-2 py-1 text-[11px] font-medium bg-muted text-foreground rounded-md">
+              {filters.type === 'buy' ? 'Long' : 'Short'}
             </span>
           )}
           {filters.source !== 'all' && (
-            <span className="px-2 py-1 text-xs bg-gray-800 text-gray-300 rounded-md border border-gray-700">
-              Source: {filters.source}
+            <span className="px-2 py-1 text-[11px] font-medium bg-muted text-foreground rounded-md">
+              {filters.source}
             </span>
           )}
           {filters.dateRange.start && (
-            <span className="px-2 py-1 text-xs bg-gray-800 text-gray-300 rounded-md border border-gray-700">
+            <span className="px-2 py-1 text-[11px] font-medium bg-muted text-foreground rounded-md">
               From: {filters.dateRange.start.toLocaleDateString()}
             </span>
           )}
           {filters.dateRange.end && (
-            <span className="px-2 py-1 text-xs bg-gray-800 text-gray-300 rounded-md border border-gray-700">
+            <span className="px-2 py-1 text-[11px] font-medium bg-muted text-foreground rounded-md">
               To: {filters.dateRange.end.toLocaleDateString()}
             </span>
           )}

@@ -3,7 +3,7 @@ import { useAppDispatch } from '../store/hooks';
 import { createManualTrade } from '../store/tradingSlice';
 import { TradeFormData } from '../types';
 import { Button } from './ui/button';
-import { X } from 'lucide-react';
+import { X, Plus } from 'lucide-react';
 
 interface AddTradeModalProps {
   isOpen: boolean;
@@ -63,11 +63,11 @@ export default function AddTradeModal({ isOpen, onClose, onSuccess }: AddTradeMo
     let contractSize = 1;
 
     if (symbol.toUpperCase() === 'XAUUSD') {
-      contractSize = 100; // gold: 100 oz per lot
+      contractSize = 100;
     }
 
     if (symbol.toUpperCase() === 'BTCUSD') {
-      contractSize = 1; // 1 BTC per lot (common)
+      contractSize = 1;
     }
 
     const pnl = priceDiff * contractSize * volume;
@@ -80,7 +80,6 @@ export default function AddTradeModal({ isOpen, onClose, onSuccess }: AddTradeMo
     e.preventDefault();
     setError(null);
 
-    // Validation
     if (!formData.symbol.trim()) {
       setError('Symbol is required');
       return;
@@ -141,32 +140,37 @@ export default function AddTradeModal({ isOpen, onClose, onSuccess }: AddTradeMo
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-900 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-gray-800">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-card rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-800">
-          <h2 className="text-xl font-semibold text-white">Add Manual Trade</h2>
+        <div className="flex items-center justify-between p-6 border-b">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Plus className="h-4 w-4 text-primary" />
+            </div>
+            <h2 className="text-lg font-bold tracking-tight">Add Manual Trade</h2>
+          </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors"
+            className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-lg hover:bg-muted"
             type="button"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
           </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
           {error && (
-            <div className="p-3 text-sm text-red-500 bg-red-500/10 border border-red-500/20 rounded-md">
+            <div className="p-3 text-sm text-loss bg-loss/10 border border-loss/20 rounded-lg">
               {error}
             </div>
           )}
 
           {/* Row 1: Symbol and Type */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="symbol" className="text-sm font-medium text-gray-300">
+            <div className="space-y-1.5">
+              <label htmlFor="symbol" className="text-xs font-medium text-muted-foreground">
                 Symbol *
               </label>
               <input
@@ -177,12 +181,12 @@ export default function AddTradeModal({ isOpen, onClose, onSuccess }: AddTradeMo
                 onChange={handleChange}
                 placeholder="EURUSD"
                 required
-                className="w-full px-3 py-2 border border-gray-700 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-base"
               />
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="type" className="text-sm font-medium text-gray-300">
+            <div className="space-y-1.5">
+              <label htmlFor="type" className="text-xs font-medium text-muted-foreground">
                 Type *
               </label>
               <select
@@ -191,7 +195,7 @@ export default function AddTradeModal({ isOpen, onClose, onSuccess }: AddTradeMo
                 value={formData.type}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border border-gray-700 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-base"
               >
                 <option value="buy">Long (Buy)</option>
                 <option value="sell">Short (Sell)</option>
@@ -201,8 +205,8 @@ export default function AddTradeModal({ isOpen, onClose, onSuccess }: AddTradeMo
 
           {/* Row 2: Entry and Exit Price */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="openPrice" className="text-sm font-medium text-gray-300">
+            <div className="space-y-1.5">
+              <label htmlFor="openPrice" className="text-xs font-medium text-muted-foreground">
                 Entry Price *
               </label>
               <input
@@ -214,12 +218,12 @@ export default function AddTradeModal({ isOpen, onClose, onSuccess }: AddTradeMo
                 onChange={handleChange}
                 placeholder="1.12345"
                 required
-                className="w-full px-3 py-2 border border-gray-700 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-base font-mono-num"
               />
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="closePrice" className="text-sm font-medium text-gray-300">
+            <div className="space-y-1.5">
+              <label htmlFor="closePrice" className="text-xs font-medium text-muted-foreground">
                 Exit Price
               </label>
               <input
@@ -230,16 +234,16 @@ export default function AddTradeModal({ isOpen, onClose, onSuccess }: AddTradeMo
                 value={formData.closePrice || ''}
                 onChange={handleChange}
                 placeholder="1.12456"
-                className="w-full px-3 py-2 border border-gray-700 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-base font-mono-num"
               />
             </div>
           </div>
 
           {/* Row 3: Volume and Position */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="volume" className="text-sm font-medium text-gray-300">
-                Volume/Quantity *
+            <div className="space-y-1.5">
+              <label htmlFor="volume" className="text-xs font-medium text-muted-foreground">
+                Volume *
               </label>
               <input
                 id="volume"
@@ -250,12 +254,12 @@ export default function AddTradeModal({ isOpen, onClose, onSuccess }: AddTradeMo
                 onChange={handleChange}
                 placeholder="0.10"
                 required
-                className="w-full px-3 py-2 border border-gray-700 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-base font-mono-num"
               />
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="position" className="text-sm font-medium text-gray-300">
+            <div className="space-y-1.5">
+              <label htmlFor="position" className="text-xs font-medium text-muted-foreground">
                 Position ID
               </label>
               <input
@@ -265,15 +269,15 @@ export default function AddTradeModal({ isOpen, onClose, onSuccess }: AddTradeMo
                 value={formData.position || ''}
                 onChange={handleChange}
                 placeholder="#12345"
-                className="w-full px-3 py-2 border border-gray-700 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-base"
               />
             </div>
           </div>
 
           {/* Row 4: Stop Loss and Take Profit */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="stopLoss" className="text-sm font-medium text-gray-300">
+            <div className="space-y-1.5">
+              <label htmlFor="stopLoss" className="text-xs font-medium text-muted-foreground">
                 Stop Loss
               </label>
               <input
@@ -284,12 +288,12 @@ export default function AddTradeModal({ isOpen, onClose, onSuccess }: AddTradeMo
                 value={formData.stopLoss || ''}
                 onChange={handleChange}
                 placeholder="1.12000"
-                className="w-full px-3 py-2 border border-gray-700 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-base font-mono-num"
               />
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="takeProfit" className="text-sm font-medium text-gray-300">
+            <div className="space-y-1.5">
+              <label htmlFor="takeProfit" className="text-xs font-medium text-muted-foreground">
                 Take Profit
               </label>
               <input
@@ -300,15 +304,15 @@ export default function AddTradeModal({ isOpen, onClose, onSuccess }: AddTradeMo
                 value={formData.takeProfit || ''}
                 onChange={handleChange}
                 placeholder="1.12500"
-                className="w-full px-3 py-2 border border-gray-700 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-base font-mono-num"
               />
             </div>
           </div>
 
           {/* Row 5: Entry and Exit Date */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="openTime" className="text-sm font-medium text-gray-300">
+            <div className="space-y-1.5">
+              <label htmlFor="openTime" className="text-xs font-medium text-muted-foreground">
                 Entry Date *
               </label>
               <input
@@ -318,12 +322,12 @@ export default function AddTradeModal({ isOpen, onClose, onSuccess }: AddTradeMo
                 value={formData.openTime as string}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border border-gray-700 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-base"
               />
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="closeTime" className="text-sm font-medium text-gray-300">
+            <div className="space-y-1.5">
+              <label htmlFor="closeTime" className="text-xs font-medium text-muted-foreground">
                 Exit Date
               </label>
               <input
@@ -332,15 +336,15 @@ export default function AddTradeModal({ isOpen, onClose, onSuccess }: AddTradeMo
                 type="datetime-local"
                 value={formData.closeTime as string}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-700 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-base"
               />
             </div>
           </div>
 
           {/* Row 6: Commission and Swap */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="commission" className="text-sm font-medium text-gray-300">
+            <div className="space-y-1.5">
+              <label htmlFor="commission" className="text-xs font-medium text-muted-foreground">
                 Commission
               </label>
               <input
@@ -351,12 +355,12 @@ export default function AddTradeModal({ isOpen, onClose, onSuccess }: AddTradeMo
                 value={formData.commission || ''}
                 onChange={handleChange}
                 placeholder="0.00"
-                className="w-full px-3 py-2 border border-gray-700 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-base font-mono-num"
               />
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="swap" className="text-sm font-medium text-gray-300">
+            <div className="space-y-1.5">
+              <label htmlFor="swap" className="text-xs font-medium text-muted-foreground">
                 Swap
               </label>
               <input
@@ -367,17 +371,17 @@ export default function AddTradeModal({ isOpen, onClose, onSuccess }: AddTradeMo
                 value={formData.swap || ''}
                 onChange={handleChange}
                 placeholder="0.00"
-                className="w-full px-3 py-2 border border-gray-700 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-base font-mono-num"
               />
             </div>
           </div>
 
           {/* Calculated Profit Display */}
           {formData.volume > 0 && formData.openPrice > 0 && formData.closePrice && formData.closePrice > 0 && (
-            <div className="p-3 bg-gray-800 rounded-md border border-gray-700">
+            <div className="p-3 bg-secondary/50 rounded-lg border">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-400">Calculated P&L:</span>
-                <span className={`text-lg font-semibold ${calculateProfit() >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                <span className="text-xs text-muted-foreground font-medium">Calculated P&L</span>
+                <span className={`text-lg font-bold font-mono-num ${calculateProfit() >= 0 ? 'text-profit' : 'text-loss'}`}>
                   {calculateProfit() >= 0 ? '+' : ''}${calculateProfit().toFixed(2)}
                 </span>
               </div>
@@ -385,7 +389,7 @@ export default function AddTradeModal({ isOpen, onClose, onSuccess }: AddTradeMo
           )}
 
           {/* Action Buttons */}
-          <div className="flex gap-3 pt-4 border-t border-gray-800">
+          <div className="flex gap-3 pt-4 border-t">
             <Button
               type="button"
               variant="outline"
@@ -400,7 +404,7 @@ export default function AddTradeModal({ isOpen, onClose, onSuccess }: AddTradeMo
               disabled={isSubmitting}
               className="flex-1"
             >
-              {isSubmitting ? 'Adding Trade...' : 'Add Trade'}
+              {isSubmitting ? 'Adding...' : 'Add Trade'}
             </Button>
           </div>
         </form>

@@ -42,7 +42,6 @@ const ReplayControls = () => {
               size="sm"
               onClick={handlePlay}
               disabled={replayStatus === 'finished' || visibleCandleCount >= allCandles.length}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
             >
               <Play className="h-4 w-4 mr-1" /> Play
             </Button>
@@ -90,7 +89,7 @@ const ReplayControls = () => {
             {' '}{activeSession?.timeframe}
           </div>
           <div className="text-muted-foreground">
-            Price: <span className="font-mono font-medium text-foreground">{currentPrice.toFixed(5)}</span>
+            Price: <span className="font-mono-num font-medium text-foreground">{currentPrice.toFixed(5)}</span>
           </div>
           <div className="text-muted-foreground">
             Candle: <span className="font-medium text-foreground">{visibleCandleCount}</span> / {allCandles.length}
@@ -102,7 +101,7 @@ const ReplayControls = () => {
       <div className="mt-3">
         <div className="w-full bg-muted rounded-full h-1.5">
           <div
-            className="bg-blue-500 h-1.5 rounded-full transition-all duration-200"
+            className="bg-primary h-1.5 rounded-full transition-all duration-200"
             style={{ width: `${progress}%` }}
           />
         </div>

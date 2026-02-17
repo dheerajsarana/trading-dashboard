@@ -1,4 +1,5 @@
 import React from 'react';
+import { ClipboardList } from 'lucide-react';
 
 interface QuickStatsProps {
   avgWinner: number;
@@ -24,56 +25,54 @@ const QuickStats: React.FC<QuickStatsProps> = ({
   return (
     <div className="bg-card border rounded-xl p-6">
       <div className="flex items-center gap-2 mb-6">
-        <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-        </svg>
-        <h3 className="font-semibold">Quick Stats</h3>
+        <ClipboardList className="w-5 h-5 text-primary/60" />
+        <h3 className="text-lg font-bold tracking-tight">Quick Stats</h3>
       </div>
-      
+
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <div className="text-muted-foreground text-xs uppercase tracking-wide mb-1">AVG WINNER</div>
-            <div className="text-blue-500 text-xl font-semibold">${avgWinner.toFixed(2)}</div>
+            <div className="text-muted-foreground text-[11px] uppercase tracking-wider font-medium mb-1">Avg Winner</div>
+            <div className="text-profit text-xl font-semibold font-mono-num">${avgWinner.toFixed(2)}</div>
           </div>
           <div>
-            <div className="text-muted-foreground text-xs uppercase tracking-wide mb-1">AVG LOSER</div>
-            <div className="text-red-500 text-xl font-semibold">-${avgLoser.toFixed(2)}</div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <div className="text-muted-foreground text-xs uppercase tracking-wide mb-1">BEST TRADE</div>
-            <div className="text-blue-500 text-xl font-semibold">${bestTrade.toFixed(2)}</div>
-          </div>
-          <div>
-            <div className="text-muted-foreground text-xs uppercase tracking-wide mb-1">WORST TRADE</div>
-            <div className="text-red-500 text-xl font-semibold">${worstTrade.toFixed(2)}</div>
+            <div className="text-muted-foreground text-[11px] uppercase tracking-wider font-medium mb-1">Avg Loser</div>
+            <div className="text-loss text-xl font-semibold font-mono-num">-${avgLoser.toFixed(2)}</div>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <div className="text-muted-foreground text-xs uppercase tracking-wide mb-1">WIN STREAK</div>
-            <div className="text-xl font-semibold">{winStreak} trades</div>
+            <div className="text-muted-foreground text-[11px] uppercase tracking-wider font-medium mb-1">Best Trade</div>
+            <div className="text-profit text-xl font-semibold font-mono-num">${bestTrade.toFixed(2)}</div>
           </div>
           <div>
-            <div className="text-muted-foreground text-xs uppercase tracking-wide mb-1">LOSS STREAK</div>
-            <div className="text-xl font-semibold">{lossStreak} trades</div>
+            <div className="text-muted-foreground text-[11px] uppercase tracking-wider font-medium mb-1">Worst Trade</div>
+            <div className="text-loss text-xl font-semibold font-mono-num">${worstTrade.toFixed(2)}</div>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <div className="text-muted-foreground text-xs uppercase tracking-wide mb-1">RISK-REWARD</div>
-            <div className={`text-xl font-semibold ${riskReward >= 1 ? 'text-green-500' : 'text-red-500'}`}>
+            <div className="text-muted-foreground text-[11px] uppercase tracking-wider font-medium mb-1">Win Streak</div>
+            <div className="text-xl font-semibold font-mono-num">{winStreak} <span className="text-xs text-muted-foreground">trades</span></div>
+          </div>
+          <div>
+            <div className="text-muted-foreground text-[11px] uppercase tracking-wider font-medium mb-1">Loss Streak</div>
+            <div className="text-xl font-semibold font-mono-num">{lossStreak} <span className="text-xs text-muted-foreground">trades</span></div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <div className="text-muted-foreground text-[11px] uppercase tracking-wider font-medium mb-1">Risk-Reward</div>
+            <div className={`text-xl font-semibold font-mono-num ${riskReward >= 1 ? 'text-profit' : 'text-loss'}`}>
               {riskReward.toFixed(2)}
             </div>
           </div>
           <div>
-            <div className="text-muted-foreground text-xs uppercase tracking-wide mb-1">OPEN TRADES</div>
-            <div className="text-xl font-semibold">{openTrades}</div>
+            <div className="text-muted-foreground text-[11px] uppercase tracking-wider font-medium mb-1">Open Trades</div>
+            <div className="text-xl font-semibold font-mono-num">{openTrades}</div>
           </div>
         </div>
       </div>

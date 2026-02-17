@@ -1,5 +1,6 @@
 import React from 'react';
 import { DrawdownStats, DurationStats, SessionStats } from '../types';
+import { TrendingDown, Clock, Globe, Info, Zap, Check, X, BarChart3 } from 'lucide-react';
 
 interface DrawdownIntelligenceProps {
   stats: DrawdownStats;
@@ -9,66 +10,62 @@ export const DrawdownIntelligence: React.FC<DrawdownIntelligenceProps> = ({ stat
   return (
     <div className="bg-card border rounded-xl p-6">
       <div className="flex items-center gap-2 mb-6">
-        <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
-        </svg>
-        <h3 className="font-semibold">Drawdown Intelligence</h3>
+        <TrendingDown className="w-5 h-5 text-loss" />
+        <h3 className="text-lg font-bold tracking-tight">Drawdown Intelligence</h3>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-muted border rounded-lg p-4">
-          <div className="text-muted-foreground text-xs uppercase tracking-wide mb-1">Max Drawdown</div>
-          <div className="text-red-500 text-2xl font-bold mb-1">${stats.maxDrawdown.toFixed(2)}</div>
-          <div className="text-muted-foreground text-sm">{stats.maxDrawdownPercent.toFixed(2)}% of peak</div>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="bg-secondary/50 border rounded-lg p-4">
+          <div className="text-muted-foreground text-[11px] uppercase tracking-wider font-medium mb-1">Max Drawdown</div>
+          <div className="text-loss text-2xl font-bold font-mono-num mb-1">${stats.maxDrawdown.toFixed(2)}</div>
+          <div className="text-muted-foreground text-xs font-mono-num">{stats.maxDrawdownPercent.toFixed(2)}% of peak</div>
         </div>
 
-        <div className="bg-muted border rounded-lg p-4">
-          <div className="text-muted-foreground text-xs uppercase tracking-wide mb-1">Current Drawdown</div>
-          <div className={`text-2xl font-bold mb-1 ${stats.currentDrawdown > 0 ? 'text-red-500' : 'text-green-500'}`}>
+        <div className="bg-secondary/50 border rounded-lg p-4">
+          <div className="text-muted-foreground text-[11px] uppercase tracking-wider font-medium mb-1">Current Drawdown</div>
+          <div className={`text-2xl font-bold font-mono-num mb-1 ${stats.currentDrawdown > 0 ? 'text-loss' : 'text-profit'}`}>
             ${stats.currentDrawdown.toFixed(2)}
           </div>
-          <div className="text-muted-foreground text-sm">
+          <div className="text-muted-foreground text-xs">
             {stats.currentDrawdown === 0 ? 'At new peak' : 'In drawdown'}
           </div>
         </div>
 
-        <div className="bg-muted border rounded-lg p-4">
-          <div className="text-muted-foreground text-xs uppercase tracking-wide mb-1">Avg Drawdown</div>
-          <div className="text-orange-400 text-xl font-semibold">${stats.avgDrawdown.toFixed(2)}</div>
+        <div className="bg-secondary/50 border rounded-lg p-4">
+          <div className="text-muted-foreground text-[11px] uppercase tracking-wider font-medium mb-1">Avg Drawdown</div>
+          <div className="text-gold text-xl font-semibold font-mono-num">${stats.avgDrawdown.toFixed(2)}</div>
         </div>
 
-        <div className="bg-muted border rounded-lg p-4">
-          <div className="text-muted-foreground text-xs uppercase tracking-wide mb-1">Recovery Factor</div>
-          <div className={`text-xl font-semibold ${stats.recoveryFactor >= 3 ? 'text-green-500' : stats.recoveryFactor >= 2 ? 'text-yellow-500' : 'text-red-500'}`}>
+        <div className="bg-secondary/50 border rounded-lg p-4">
+          <div className="text-muted-foreground text-[11px] uppercase tracking-wider font-medium mb-1">Recovery Factor</div>
+          <div className={`text-xl font-semibold font-mono-num ${stats.recoveryFactor >= 3 ? 'text-profit' : stats.recoveryFactor >= 2 ? 'text-gold' : 'text-loss'}`}>
             {stats.recoveryFactor.toFixed(2)}
           </div>
-          <div className="text-muted-foreground text-xs mt-1">
+          <div className="text-muted-foreground text-[10px] mt-1">
             {stats.recoveryFactor >= 3 ? 'Excellent' : stats.recoveryFactor >= 2 ? 'Good' : 'Needs improvement'}
           </div>
         </div>
 
-        <div className="bg-muted border rounded-lg p-4">
-          <div className="text-muted-foreground text-xs uppercase tracking-wide mb-1">Avg Recovery Time</div>
-          <div className="text-blue-400 text-xl font-semibold">
+        <div className="bg-secondary/50 border rounded-lg p-4">
+          <div className="text-muted-foreground text-[11px] uppercase tracking-wider font-medium mb-1">Avg Recovery Time</div>
+          <div className="text-primary text-xl font-semibold font-mono-num">
             {stats.avgDrawdownDuration.toFixed(1)} days
           </div>
         </div>
 
-        <div className="bg-muted border rounded-lg p-4">
-          <div className="text-muted-foreground text-xs uppercase tracking-wide mb-1">Max Recovery Time</div>
-          <div className="text-purple-400 text-xl font-semibold">
+        <div className="bg-secondary/50 border rounded-lg p-4">
+          <div className="text-muted-foreground text-[11px] uppercase tracking-wider font-medium mb-1">Max Recovery Time</div>
+          <div className="text-crypto text-xl font-semibold font-mono-num">
             {stats.maxDrawdownDuration.toFixed(1)} days
           </div>
         </div>
       </div>
 
-      <div className="mt-4 p-3 bg-muted/50 border rounded-lg">
+      <div className="mt-4 p-3 bg-secondary/30 border rounded-lg">
         <div className="flex items-start gap-2 text-xs text-muted-foreground">
-          <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+          <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-primary/60" />
           <div>
-            <strong className="text-foreground">Recovery Factor:</strong> Total Profit ÷ Max Drawdown. 
+            <strong className="text-foreground">Recovery Factor:</strong> Total Profit / Max Drawdown.
             Above 3 is excellent, above 2 is good. It shows how much you earn relative to your worst loss period.
           </div>
         </div>
@@ -96,72 +93,60 @@ export const TradeDurationAnalysis: React.FC<TradeDurationAnalysisProps> = ({ st
   return (
     <div className="bg-card border rounded-xl p-6">
       <div className="flex items-center gap-2 mb-6">
-        <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <h3 className="font-semibold">Trade Duration Analysis</h3>
+        <Clock className="w-5 h-5 text-primary/60" />
+        <h3 className="text-lg font-bold tracking-tight">Trade Duration Analysis</h3>
       </div>
 
-      <div className="space-y-4">
-        <div className="bg-gradient-to-r from-green-900/20 to-transparent border border-green-800/50 rounded-lg p-4">
+      <div className="space-y-3">
+        <div className="bg-gradient-to-r from-profit/5 to-transparent border border-profit/15 rounded-lg p-4">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              <span className="text-foreground font-medium">Winners</span>
+              <Check className="w-4 h-4 text-profit" />
+              <span className="text-sm font-medium">Winners</span>
             </div>
-            <div className="text-green-400 text-2xl font-bold">{formatHours(stats.avgHoldTimeWinners)}</div>
+            <div className="text-profit text-2xl font-bold font-mono-num">{formatHours(stats.avgHoldTimeWinners)}</div>
           </div>
-          <div className="text-muted-foreground text-sm">Average hold time for profitable trades</div>
+          <div className="text-muted-foreground text-xs">Average hold time for profitable trades</div>
         </div>
 
-        <div className="bg-gradient-to-r from-red-900/20 to-transparent border border-red-800/50 rounded-lg p-4">
+        <div className="bg-gradient-to-r from-loss/5 to-transparent border border-loss/15 rounded-lg p-4">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              <span className="text-foreground font-medium">Losers</span>
+              <X className="w-4 h-4 text-loss" />
+              <span className="text-sm font-medium">Losers</span>
             </div>
-            <div className="text-red-400 text-2xl font-bold">{formatHours(stats.avgHoldTimeLosers)}</div>
+            <div className="text-loss text-2xl font-bold font-mono-num">{formatHours(stats.avgHoldTimeLosers)}</div>
           </div>
-          <div className="text-muted-foreground text-sm">Average hold time for losing trades</div>
+          <div className="text-muted-foreground text-xs">Average hold time for losing trades</div>
         </div>
 
-        <div className="bg-gradient-to-r from-blue-900/20 to-transparent border border-blue-800/50 rounded-lg p-4">
+        <div className="bg-gradient-to-r from-primary/5 to-transparent border border-primary/15 rounded-lg p-4">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-              <span className="text-foreground font-medium">All Trades</span>
+              <BarChart3 className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium">All Trades</span>
             </div>
-            <div className="text-blue-400 text-2xl font-bold">{formatHours(stats.avgHoldTimeAll)}</div>
+            <div className="text-primary text-2xl font-bold font-mono-num">{formatHours(stats.avgHoldTimeAll)}</div>
           </div>
-          <div className="text-muted-foreground text-sm">Overall average hold time</div>
+          <div className="text-muted-foreground text-xs">Overall average hold time</div>
         </div>
 
-        <div className="bg-muted border rounded-lg p-4">
+        <div className="bg-secondary/50 border rounded-lg p-4">
           <div className="flex items-center gap-2 mb-2">
-            <svg className="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            <span className="text-foreground font-medium">Optimal Holding Window</span>
+            <Zap className="w-4 h-4 text-gold" />
+            <span className="text-sm font-medium">Optimal Holding Window</span>
           </div>
-          <div className="text-yellow-400 text-xl font-semibold">{stats.optimalHoldingWindow}</div>
-          <div className="text-muted-foreground text-xs mt-2">Based on your winning trades pattern</div>
+          <div className="text-gold text-xl font-semibold font-mono-num">{stats.optimalHoldingWindow}</div>
+          <div className="text-muted-foreground text-[10px] mt-2">Based on your winning trades pattern</div>
         </div>
       </div>
 
-      <div className="mt-4 p-3 bg-muted/50 border rounded-lg">
+      <div className="mt-4 p-3 bg-secondary/30 border rounded-lg">
         <div className="flex items-start gap-2 text-xs text-muted-foreground">
-          <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+          <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-primary/60" />
           <div>
-            If winners are held longer than losers, you're cutting profits early. 
-            If losers are held longer, you're holding onto hope. Aim for winners `${'>'}` losers.
+            If winners are held longer than losers, you're cutting profits early.
+            If losers are held longer, you're holding onto hope. Aim for winners {'>'} losers.
           </div>
         </div>
       </div>
@@ -176,43 +161,31 @@ interface SessionAnalyticsProps {
 export const SessionAnalytics: React.FC<SessionAnalyticsProps> = ({ sessions }) => {
   const getSessionIcon = (session: string) => {
     switch (session) {
-      case 'Asia':
-        return '🌏';
-      case 'London':
-        return '🇬🇧';
-      case 'New York':
-        return '🇺🇸';
-      case 'London-NY Overlap':
-        return '⚡';
-      default:
-        return '🕐';
+      case 'Asia': return '🌏';
+      case 'London': return '🇬🇧';
+      case 'New York': return '🇺🇸';
+      case 'London-NY Overlap': return '⚡';
+      default: return '🕐';
     }
   };
 
   const getSessionTime = (session: string) => {
     switch (session) {
-      case 'Asia':
-        return '00:00 - 09:00 UTC';
-      case 'London':
-        return '08:00 - 17:00 UTC';
-      case 'New York':
-        return '13:00 - 22:00 UTC';
-      case 'London-NY Overlap':
-        return '13:00 - 17:00 UTC';
-      default:
-        return '';
+      case 'Asia': return '00:00 - 09:00 UTC';
+      case 'London': return '08:00 - 17:00 UTC';
+      case 'New York': return '13:00 - 22:00 UTC';
+      case 'London-NY Overlap': return '13:00 - 17:00 UTC';
+      default: return '';
     }
   };
 
   return (
     <div className="bg-card border rounded-xl p-6">
       <div className="flex items-center gap-2 mb-6">
-        <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <h3 className="font-semibold">Session & Kill-Zone Analytics</h3>
+        <Globe className="w-5 h-5 text-crypto" />
+        <h3 className="text-lg font-bold tracking-tight">Session & Kill-Zone Analytics</h3>
       </div>
-      <p className="text-muted-foreground text-sm mb-4">Performance by trading session (sorted by expectancy)</p>
+      <p className="text-muted-foreground text-xs mb-4">Performance by trading session (sorted by expectancy)</p>
 
       <div className="space-y-3">
         {sessions.map((session, index) => (
@@ -220,58 +193,57 @@ export const SessionAnalytics: React.FC<SessionAnalyticsProps> = ({ sessions }) 
             key={session.session}
             className={`border rounded-lg p-4 ${
               index === 0
-                ? 'bg-gradient-to-r from-green-900/20 to-transparent border-green-800/50'
-                : 'bg-muted border'
+                ? 'bg-gradient-to-r from-profit/5 to-transparent border-profit/20'
+                : 'bg-secondary/30 border-border'
             }`}
           >
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
-                <span className="text-2xl">{getSessionIcon(session.session)}</span>
+                <span className="text-xl">{getSessionIcon(session.session)}</span>
                 <div>
-                  <div className="font-semibold">{session.session}</div>
-                  <div className="text-muted-foreground text-xs">{getSessionTime(session.session)}</div>
+                  <div className="text-sm font-semibold">{session.session}</div>
+                  <div className="text-muted-foreground text-[10px]">{getSessionTime(session.session)}</div>
                 </div>
               </div>
               {index === 0 && (
-                <div className="px-3 py-1 bg-green-500/20 border border-green-500/50 rounded-full">
-                  <span className="text-green-400 text-xs font-semibold">⭐ Best Session</span>
+                <div className="px-2.5 py-1 bg-profit/10 border border-profit/20 rounded-md">
+                  <span className="text-profit text-[10px] font-semibold">Best Session</span>
                 </div>
               )}
             </div>
 
-            <div className="grid grid-cols-5 gap-3 text-sm">
+            <div className="grid grid-cols-5 gap-3 text-xs">
               <div>
-                <div className="text-muted-foreground text-xs">Trades</div>
-                <div className="font-semibold">{session.trades}</div>
+                <div className="text-muted-foreground text-[10px] uppercase tracking-wider">Trades</div>
+                <div className="font-semibold font-mono-num">{session.trades}</div>
               </div>
               <div>
-                <div className="text-muted-foreground text-xs">P&L</div>
-                <div className={`font-semibold ${session.pnl >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                <div className="text-muted-foreground text-[10px] uppercase tracking-wider">P&L</div>
+                <div className={`font-semibold font-mono-num ${session.pnl >= 0 ? 'text-profit' : 'text-loss'}`}>
                   ${session.pnl.toFixed(2)}
                 </div>
               </div>
               <div>
-                <div className="text-muted-foreground text-xs">Win Rate</div>
-                <div className="font-semibold">{session.winRate.toFixed(1)}%</div>
+                <div className="text-muted-foreground text-[10px] uppercase tracking-wider">Win Rate</div>
+                <div className="font-semibold font-mono-num">{session.winRate.toFixed(1)}%</div>
               </div>
               <div>
-                <div className="text-muted-foreground text-xs">Expectancy</div>
-                <div className={`font-semibold ${session.expectancy >= 0 ? 'text-blue-500' : 'text-red-500'}`}>
+                <div className="text-muted-foreground text-[10px] uppercase tracking-wider">Expectancy</div>
+                <div className={`font-semibold font-mono-num ${session.expectancy >= 0 ? 'text-primary' : 'text-loss'}`}>
                   ${session.expectancy.toFixed(2)}
                 </div>
               </div>
               <div>
-                <div className="text-muted-foreground text-xs">Avg Trade</div>
-                <div className={`font-semibold ${session.avgProfit >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                <div className="text-muted-foreground text-[10px] uppercase tracking-wider">Avg Trade</div>
+                <div className={`font-semibold font-mono-num ${session.avgProfit >= 0 ? 'text-profit' : 'text-loss'}`}>
                   ${session.avgProfit.toFixed(2)}
                 </div>
               </div>
             </div>
 
-            {/* Performance bar */}
-            <div className="mt-3 h-2 bg-muted rounded-full overflow-hidden">
+            <div className="mt-3 h-1.5 bg-secondary rounded-full overflow-hidden">
               <div
-                className={`h-full ${session.expectancy >= 0 ? 'bg-green-500' : 'bg-red-500'}`}
+                className={`h-full rounded-full ${session.expectancy >= 0 ? 'bg-profit' : 'bg-loss'}`}
                 style={{
                   width: `${Math.min(100, Math.abs(session.expectancy) * 10)}%`,
                 }}
@@ -282,16 +254,19 @@ export const SessionAnalytics: React.FC<SessionAnalyticsProps> = ({ sessions }) 
       </div>
 
       {sessions.length === 0 && (
-        <div className="text-center text-muted-foreground py-8">No session data available</div>
+        <div className="text-center py-8">
+          <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mx-auto mb-2">
+            <Globe className="h-4 w-4 text-muted-foreground/40" />
+          </div>
+          <p className="text-xs text-muted-foreground">No session data available</p>
+        </div>
       )}
 
-      <div className="mt-4 p-3 bg-muted/50 border rounded-lg">
+      <div className="mt-4 p-3 bg-secondary/30 border rounded-lg">
         <div className="flex items-start gap-2 text-xs text-muted-foreground">
-          <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+          <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-primary/60" />
           <div>
-            <strong className="text-foreground">Kill Zones:</strong> London-NY Overlap (13:00-17:00 UTC) typically has highest volatility. 
+            <strong className="text-foreground">Kill Zones:</strong> London-NY Overlap (13:00-17:00 UTC) typically has highest volatility.
             Focus on your best performing session based on expectancy, not just win rate.
           </div>
         </div>
