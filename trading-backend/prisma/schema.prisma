@@ -17,10 +17,11 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  trades       Trade[]
-  stats        UserStats[]
-  mt5Accounts  MT5Account[]
-  screenshots  Screenshot[]
+  trades            Trade[]
+  stats             UserStats[]
+  mt5Accounts       MT5Account[]
+  screenshots       Screenshot[]
+  backtestSessions  BacktestSession[]
 
   @@map("users")
 }
@@ -330,4 +331,86 @@ model Screenshot {
   @@index([userId])
   @@index([userId, createdAt])
   @@map("screenshots")
+}
+
+// ============================================
+// Backtesting / FX Replay Models
+// ============================================
+
+model CachedCandle {
+  id        String   @id @default(cuid())
+
+  symbol    String
+  timeframe String
+  timestamp DateTime
+
+  open      Float
+  high      Float
+  low       Float
+  close     Float
+  volume    Float    @default(0)
+
+  fetchedAt DateTime @default(now())
+
+  @@unique([symbol, timeframe, timestamp])
+  @@index([symbol, timeframe])
+  @@index([symbol, timeframe, timestamp])
+  @@map("cached_candles")
+}
+
+model BacktestSession {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  symbol    String
+  timeframe String
+  startDate DateTime
+  endDate   DateTime
+
+  status        String   @default("active")
+  totalPnL      Float?
+  totalTrades   Int?
+  wins          Int?
+  losses        Int?
+  winRate       Float?
+  profitFactor  Float?
+  maxDrawdown   Float?
+  finalCandle   Int?
+
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  trades    BacktestTrade[]
+
+  @@index([userId])
+  @@index([userId, status])
+  @@map("backtest_sessions")
+}
+
+model BacktestTrade {
+  id          String          @id @default(cuid())
+  sessionId   String
+  session     BacktestSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  type        String
+  entryPrice  Float
+  entryTime   DateTime
+  exitPrice   Float?
+  exitTime    DateTime?
+  volume      Float           @default(1.0)
+  stopLoss    Float?
+  takeProfit  Float?
+
+  pnl         Float?
+  pnlPips     Float?
+  closeReason String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([sessionId])
+  @@map("backtest_trades")
 }

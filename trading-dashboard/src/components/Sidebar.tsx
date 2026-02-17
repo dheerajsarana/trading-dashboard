@@ -8,6 +8,7 @@ import {
   PanelLeft,
   List,
   BookOpen,
+  PlayCircle,
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { toggleSidebar } from "../store/tradingSlice";
@@ -26,6 +27,7 @@ const Sidebar = ({ activeSection, onMenuChange }: SidebarProps) => {
     { id: "analytics", label: "Analytics", icon: LineChart },
     { id: "trades", label: "Trades", icon: List },
     { id: "journal", label: "Journal", icon: BookOpen },
+    { id: "backtest", label: "FX Replay", icon: PlayCircle },
   ];
 
   return (

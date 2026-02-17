@@ -5,7 +5,14 @@
       "Bash(npx prisma migrate:*)",
       "Bash(npx shadcn@latest add:*)",
       "Bash(npm run prisma:migrate:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(npx prisma generate:*)",
+      "Bash(docker compose:*)",
+      "Bash(npm view:*)",
+      "mcp__playwright__browser_fill_form",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_take_screenshot"
     ]
   }
 }

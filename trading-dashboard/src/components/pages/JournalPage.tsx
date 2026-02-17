@@ -215,7 +215,7 @@ export default function JournalPage() {
       </div>
 
       {/* Main Content - Two Column Layout */}
-      <div className="grid grid-cols-12 gap-6 h-[calc(100%-14rem)]">
+      <div className="grid grid-cols-12 gap-6 h-[calc(100%+11rem)]">
         {/* Left Sidebar - Journal List */}
         <div className="col-span-12 md:col-span-4 bg-card rounded-lg border p-4 overflow-y-auto">
           <JournalList
@@ -227,7 +227,7 @@ export default function JournalPage() {
         </div>
 
         {/* Right Panel - Journal Detail */}
-        <div className="col-span-12 md:col-span-8 bg-card rounded-lg border overflow-hidden">
+        <div className="col-span-12 md:col-span-8 bg-card rounded-lg border overflow-hidden min-h-0">
           <JournalDetail journal={selectedJournal} onSave={handleSave} />
         </div>
       </div>

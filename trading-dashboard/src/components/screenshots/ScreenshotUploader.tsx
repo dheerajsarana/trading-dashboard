@@ -1,6 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { Upload, X, FileImage, AlertCircle } from 'lucide-react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { Upload, X, FileImage, AlertCircle, Clipboard } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   uploadScreenshots,
@@ -18,11 +17,7 @@ interface ScreenshotUploaderProps {
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_FILES = 5;
-const ACCEPTED_TYPES = {
-  'image/jpeg': ['.jpg', '.jpeg'],
-  'image/png': ['.png'],
-  'image/webp': ['.webp'],
-};
+const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 export const ScreenshotUploader: React.FC<ScreenshotUploaderProps> = ({
   tradeId,
@@ -37,10 +32,12 @@ export const ScreenshotUploader: React.FC<ScreenshotUploaderProps> = ({
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Validate file
   const validateFile = useCallback((file: File): string | null => {
-    if (!Object.keys(ACCEPTED_TYPES).includes(file.type)) {
+    if (!ACCEPTED_TYPES.includes(file.type)) {
       return `${file.name}: Invalid file type. Only JPEG, PNG, and WebP are allowed.`;
     }
     if (file.size > MAX_FILE_SIZE) {
@@ -49,35 +46,19 @@ export const ScreenshotUploader: React.FC<ScreenshotUploaderProps> = ({
     return null;
   }, []);
 
-  // Handle file drop or selection
-  const onDrop = useCallback(
-    (acceptedFiles: File[], rejectedFiles: any[]) => {
+  // Add files (shared by file input and paste)
+  const addFiles = useCallback(
+    (files: File[]) => {
       setValidationError(null);
       dispatch(clearError());
 
-      // Check rejected files
-      if (rejectedFiles.length > 0) {
-        const errors = rejectedFiles.map((rejected) => {
-          if (rejected.errors?.[0]?.code === 'file-too-large') {
-            return `${rejected.file.name}: File too large (max 5MB)`;
-          }
-          if (rejected.errors?.[0]?.code === 'file-invalid-type') {
-            return `${rejected.file.name}: Invalid file type`;
-          }
-          return `${rejected.file.name}: Invalid file`;
-        });
-        setValidationError(errors.join('\n'));
-        return;
-      }
-
-      // Validate each file
       const errors: string[] = [];
       const validFiles: File[] = [];
 
-      for (const file of acceptedFiles) {
-        const error = validateFile(file);
-        if (error) {
-          errors.push(error);
+      for (const file of files) {
+        const err = validateFile(file);
+        if (err) {
+          errors.push(err);
         } else {
           validFiles.push(file);
         }
@@ -87,40 +68,65 @@ export const ScreenshotUploader: React.FC<ScreenshotUploaderProps> = ({
         setValidationError(errors.join('\n'));
       }
 
-      // Check total count
+      if (validFiles.length === 0) return;
+
       const totalFiles = selectedFiles.length + validFiles.length;
       if (totalFiles > MAX_FILES) {
         setValidationError(`Maximum ${MAX_FILES} files allowed. Please remove some files.`);
         return;
       }
 
-      // Update selected files
       const newFiles = [...selectedFiles, ...validFiles];
       setSelectedFiles(newFiles);
 
-      // Generate preview URLs
       const newPreviews = validFiles.map((file) => URL.createObjectURL(file));
-      setPreviewUrls([...previewUrls, ...newPreviews]);
+      setPreviewUrls((prev) => [...prev, ...newPreviews]);
     },
-    [selectedFiles, previewUrls, validateFile, dispatch]
+    [selectedFiles, validateFile, dispatch]
   );
 
-  // Setup dropzone
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: ACCEPTED_TYPES,
-    maxSize: MAX_FILE_SIZE,
-    maxFiles: MAX_FILES,
-    multiple: true,
-    disabled: isUploading,
-  });
+  // Handle file input change
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      addFiles(Array.from(e.target.files));
+      e.target.value = '';
+    }
+  };
+
+  // Handle paste from clipboard
+  useEffect(() => {
+    const handlePaste = (e: ClipboardEvent) => {
+      if (isUploading) return;
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      const imageFiles: File[] = [];
+      for (const item of Array.from(items)) {
+        if (item.type.startsWith('image/')) {
+          const file = item.getAsFile();
+          if (file) {
+            imageFiles.push(file);
+          }
+        }
+      }
+
+      if (imageFiles.length > 0) {
+        e.preventDefault();
+        addFiles(imageFiles);
+      }
+    };
+
+    document.addEventListener('paste', handlePaste);
+    return () => {
+      document.removeEventListener('paste', handlePaste);
+    };
+  }, [addFiles, isUploading]);
 
   // Remove file from selection
   const removeFile = (index: number) => {
     const newFiles = selectedFiles.filter((_, i) => i !== index);
     setSelectedFiles(newFiles);
 
-    // Revoke and remove preview URL
     URL.revokeObjectURL(previewUrls[index]);
     const newPreviews = previewUrls.filter((_, i) => i !== index);
     setPreviewUrls(newPreviews);
@@ -145,14 +151,11 @@ export const ScreenshotUploader: React.FC<ScreenshotUploaderProps> = ({
       ).unwrap();
 
       // Clear selections and previews on success
-      selectedFiles.forEach((_, index) => {
-        URL.revokeObjectURL(previewUrls[index]);
-      });
+      previewUrls.forEach((url) => URL.revokeObjectURL(url));
       setSelectedFiles([]);
       setPreviewUrls([]);
       setValidationError(null);
 
-      // Callback
       if (onUploadComplete) {
         onUploadComplete();
       }
@@ -162,35 +165,45 @@ export const ScreenshotUploader: React.FC<ScreenshotUploaderProps> = ({
   };
 
   // Cleanup on unmount
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       previewUrls.forEach((url) => URL.revokeObjectURL(url));
     };
   }, [previewUrls]);
 
   return (
-    <div className="space-y-4">
-      {/* Dropzone */}
+    <div ref={containerRef} className="space-y-4">
+      {/* Upload Area */}
       <div
-        {...getRootProps()}
         className={`
-          border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
-          ${isDragActive ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300 dark:border-gray-600'}
-          ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:border-blue-400 dark:hover:border-blue-500'}
+          border-2 border-dashed rounded-lg p-8 text-center transition-colors
+          border-gray-300 dark:border-gray-600
+          ${isUploading ? 'opacity-50' : ''}
         `}
       >
-        <input {...getInputProps()} />
-        <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-          {isDragActive ? (
-            'Drop the files here...'
-          ) : (
-            <>
-              Drag and drop screenshots here, or <span className="text-blue-600 dark:text-blue-400">browse</span>
-            </>
-          )}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".jpg,.jpeg,.png,.webp"
+          multiple
+          onChange={handleFileChange}
+          disabled={isUploading}
+          className="hidden"
+        />
+        <Clipboard className="w-10 h-10 mx-auto mb-3 text-gray-400" />
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+          Paste an image from clipboard
         </p>
-        <p className="text-xs text-gray-500 dark:text-gray-500">
+        <p className="text-xs text-gray-500 dark:text-gray-500 mb-3">or</p>
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isUploading}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Upload className="w-4 h-4" />
+          Choose Files
+        </button>
+        <p className="text-xs text-gray-500 dark:text-gray-500 mt-3">
           JPEG, PNG, WebP (max 5MB, up to {MAX_FILES} files)
         </p>
       </div>

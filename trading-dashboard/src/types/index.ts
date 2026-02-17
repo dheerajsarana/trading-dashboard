@@ -380,3 +380,83 @@ export interface Screenshot {
   createdAt: string | Date;
   updatedAt: string | Date;
 }
+
+// ============================================
+// Backtest / FX Replay Types
+// ============================================
+
+export interface Candle {
+  timestamp: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
+
+export interface BacktestSession {
+  id: string;
+  userId: string;
+  symbol: string;
+  timeframe: string;
+  startDate: string;
+  endDate: string;
+  status: 'active' | 'completed' | 'abandoned';
+  totalPnL?: number;
+  totalTrades?: number;
+  wins?: number;
+  losses?: number;
+  winRate?: number;
+  profitFactor?: number;
+  maxDrawdown?: number;
+  finalCandle?: number;
+  startedAt: string;
+  completedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  trades?: BacktestTrade[];
+  _count?: { trades: number };
+}
+
+export interface BacktestTrade {
+  id: string;
+  sessionId: string;
+  type: 'buy' | 'sell';
+  entryPrice: number;
+  entryTime: string;
+  exitPrice?: number;
+  exitTime?: string;
+  volume: number;
+  stopLoss?: number;
+  takeProfit?: number;
+  pnl?: number;
+  pnlPips?: number;
+  closeReason?: 'manual' | 'stop_loss' | 'take_profit';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type ReplaySpeed = 1 | 2 | 5 | 10;
+
+export type ReplayStatus = 'idle' | 'playing' | 'paused' | 'finished';
+
+export interface BacktestSessionConfig {
+  symbol: string;
+  timeframe: string;
+  startDate: string;
+  endDate: string;
+}
+
+export interface BacktestSummary {
+  totalPnL: number;
+  totalTrades: number;
+  wins: number;
+  losses: number;
+  winRate: number;
+  profitFactor: number;
+  maxDrawdown: number;
+  avgWin: number;
+  avgLoss: number;
+  bestTrade: number;
+  worstTrade: number;
+}

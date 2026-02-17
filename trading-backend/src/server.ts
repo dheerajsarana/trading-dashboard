@@ -9,6 +9,7 @@ import { TradesController } from './controllers/trades.controller';
 import { StatsController } from './controllers/stats.controller';
 import { JournalController } from './controllers/journal.controller';
 import { MT5Controller } from './controllers/mt5.controller';
+import { BacktestController } from './controllers/backtest.controller';
 import screenshotRoutes from './routes/screenshot.routes';
 
 // Load environment variables
@@ -84,6 +85,17 @@ app.get('/api/mt5/accounts/:id/dashboard', authenticateToken, MT5Controller.getD
 app.get('/api/mt5/accounts/:id/equity', authenticateToken, MT5Controller.getEquityCurve);
 app.get('/api/mt5/accounts/:id/positions', authenticateToken, MT5Controller.getPositions);
 app.get('/api/mt5/accounts/:id/history', authenticateToken, MT5Controller.getHistory);
+
+// Backtest routes (protected)
+app.get('/api/backtest/symbols', authenticateToken, BacktestController.getSymbols);
+app.get('/api/backtest/candles', authenticateToken, BacktestController.getCandles);
+app.post('/api/backtest/sessions', authenticateToken, BacktestController.createSession);
+app.get('/api/backtest/sessions', authenticateToken, BacktestController.getSessions);
+app.get('/api/backtest/sessions/:id', authenticateToken, BacktestController.getSession);
+app.put('/api/backtest/sessions/:id/complete', authenticateToken, BacktestController.completeSession);
+app.delete('/api/backtest/sessions/:id', authenticateToken, BacktestController.deleteSession);
+app.post('/api/backtest/sessions/:id/trades', authenticateToken, BacktestController.addTrade);
+app.put('/api/backtest/trades/:tradeId/close', authenticateToken, BacktestController.closeTrade);
 
 // Screenshot routes (protected)
 app.use('/api/screenshots', screenshotRoutes);

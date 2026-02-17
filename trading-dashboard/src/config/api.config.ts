@@ -32,5 +32,14 @@ export const API_CONFIG = {
       update: (id: string) => `/api/journals/${id}`,
       delete: (id: string) => `/api/journals/${id}`,
     },
+    backtest: {
+      symbols: '/api/backtest/symbols',
+      candles: '/api/backtest/candles',
+      sessions: '/api/backtest/sessions',
+      session: (id: string) => `/api/backtest/sessions/${id}`,
+      complete: (id: string) => `/api/backtest/sessions/${id}/complete`,
+      addTrade: (sessionId: string) => `/api/backtest/sessions/${sessionId}/trades`,
+      closeTrade: (tradeId: string) => `/api/backtest/trades/${tradeId}/close`,
+    },
   },
 };

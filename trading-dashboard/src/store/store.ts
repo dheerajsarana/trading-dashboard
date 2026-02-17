@@ -4,6 +4,7 @@ import authReducer from './authSlice';
 import journalReducer from './journalSlice';
 import mt5Reducer from './mt5Slice';
 import screenshotReducer from './screenshotSlice';
+import backtestReducer from './backtestSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     journal: journalReducer,
     mt5: mt5Reducer,
     screenshots: screenshotReducer,
+    backtest: backtestReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -34,6 +36,10 @@ export const store = configureStore({
           'screenshots/upload/pending',
           'screenshots/upload/fulfilled',
           'screenshots/upload/rejected',
+          'backtest/fetchCandles/fulfilled',
+          'backtest/createSession/fulfilled',
+          'backtest/fetchSessions/fulfilled',
+          'backtest/saveResults/fulfilled',
         ],
         // Ignore these field paths in all actions
         ignoredActionPaths: [
@@ -48,7 +54,7 @@ export const store = configureStore({
           'meta.arg.files',
         ],
         // Ignore these paths in the state
-        ignoredPaths: ['trading.selectedDate', 'trading.allTrades', 'auth.user', 'journal.journals', 'journal.selectedJournal', 'mt5.accounts', 'mt5.dashboardData', 'screenshots.screenshots'],
+        ignoredPaths: ['trading.selectedDate', 'trading.allTrades', 'auth.user', 'journal.journals', 'journal.selectedJournal', 'mt5.accounts', 'mt5.dashboardData', 'screenshots.screenshots', 'backtest.allCandles', 'backtest.openPositions', 'backtest.closedTrades', 'backtest.sessions', 'backtest.activeSession'],
       },
     }),
 });

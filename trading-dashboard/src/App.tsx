@@ -7,6 +7,7 @@ import Sidebar from './components/Sidebar';
 import AnalyticsMenu from './components/menus/AnalyticsMenu';
 import TradesPage from './components/pages/TradesPage';
 import JournalPage from './components/pages/JournalPage';
+import BacktestPage from './components/pages/BacktestPage';
 import LoginForm from './components/auth/LoginForm';
 import RegisterForm from './components/auth/RegisterForm';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -34,6 +35,11 @@ const menus = [
     id: "journal",
     path: "/dashboard/journal",
     component: <JournalPage />
+  },
+  {
+    id: "backtest",
+    path: "/dashboard/backtest",
+    component: <BacktestPage />
   }
 ]
 
@@ -79,6 +85,11 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
         return {
           title: 'Trade Journal',
           description: 'Document and reflect on your trading decisions'
+        };
+      case 'backtest':
+        return {
+          title: 'FX Replay',
+          description: 'Practice trading with historical price replay'
         };
       default:
         return {
@@ -171,6 +182,7 @@ function App() {
                   <Route path="analytics" element={<AnalyticsMenu />} />
                   <Route path="trades" element={<TradesPage />} />
                   <Route path="journal" element={<JournalPage />} />
+                  <Route path="backtest" element={<BacktestPage />} />
                   <Route path="" element={<Navigate to="/dashboard/overview" replace />} />
                 </Routes>
               </DashboardLayout>
