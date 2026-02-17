@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { TradeFiltersState } from '../types';
 import { Button } from './ui/button';
 import { Filter, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { useAppSelector } from '../store/hooks';
+import { formatDateInTimezone } from '../utils/timezone';
 
 interface TradeFiltersProps {
   availableSymbols: string[];
@@ -10,6 +12,7 @@ interface TradeFiltersProps {
 }
 
 export default function TradeFilters({ availableSymbols, onFilterChange, initialFilters }: TradeFiltersProps) {
+  const timezone = useAppSelector((state) => state.trading.timezone);
   const [isExpanded, setIsExpanded] = useState(false);
   const [filters, setFilters] = useState<TradeFiltersState>({
     symbol: initialFilters?.symbol || 'all',
@@ -218,12 +221,12 @@ export default function TradeFilters({ availableSymbols, onFilterChange, initial
           )}
           {filters.dateRange.start && (
             <span className="px-2 py-1 text-[11px] font-medium bg-muted text-foreground rounded-md">
-              From: {filters.dateRange.start.toLocaleDateString()}
+              From: {formatDateInTimezone(filters.dateRange.start, timezone, { month: 'short', day: 'numeric', year: 'numeric' })}
             </span>
           )}
           {filters.dateRange.end && (
             <span className="px-2 py-1 text-[11px] font-medium bg-muted text-foreground rounded-md">
-              To: {filters.dateRange.end.toLocaleDateString()}
+              To: {formatDateInTimezone(filters.dateRange.end, timezone, { month: 'short', day: 'numeric', year: 'numeric' })}
             </span>
           )}
         </div>

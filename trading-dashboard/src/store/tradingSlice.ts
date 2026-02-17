@@ -12,6 +12,7 @@ interface TradingState {
   tradeFilter: TradeFilter;
   assetFilter: AssetFilter;
   selectedDate: Date | null;
+  timezone: string;
   isLoading: boolean;
   isSidebarOpen: boolean;
   error: string | null;
@@ -26,6 +27,7 @@ const initialState: TradingState = {
   tradeFilter: 'all',
   assetFilter: 'all',
   selectedDate: null,
+  timezone: 'Asia/Kolkata',
   isLoading: false,
   isSidebarOpen: true,
   error: null,
@@ -197,6 +199,9 @@ const tradingSlice = createSlice({
     setSelectedDate: (state, action: PayloadAction<Date | null>) => {
       state.selectedDate = action.payload;
     },
+    setTimezone: (state, action: PayloadAction<string>) => {
+      state.timezone = action.payload;
+    },
     setIsLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
@@ -335,6 +340,7 @@ export const {
   setTradeFilter,
   setAssetFilter,
   setSelectedDate,
+  setTimezone,
   setIsLoading,
   toggleSidebar,
   clearError,

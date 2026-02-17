@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { fetchTradesWithFilters, deleteTrade, deleteAllTrades } from '../../store/tradingSlice';
+import { fetchTradesWithFilters, deleteTrade, deleteAllTrades, setTimezone } from '../../store/tradingSlice';
+import { TIMEZONE_OPTIONS } from '../../utils/timezone';
 import { fetchMT5Accounts } from '../../store/mt5Slice';
 import { TradeFiltersState } from '../../types';
 import TradesTable from '../TradesTable';
@@ -14,7 +15,7 @@ import { useConfirmDialog } from '../../hooks/useConfirmDialog';
 
 export default function TradesPage() {
   const dispatch = useAppDispatch();
-  const { allTrades, isLoading, pagination } = useAppSelector((state) => state.trading);
+  const { allTrades, isLoading, pagination, timezone } = useAppSelector((state) => state.trading);
   const { toast } = useToast();
   const { confirm, ConfirmDialog } = useConfirmDialog();
 
@@ -193,6 +194,20 @@ export default function TradesPage() {
             </Button>
           )}
         </div>
+      </div>
+
+      {/* Timezone */}
+      <div className="flex items-center gap-2">
+        <span className="text-sm text-muted-foreground">Timezone:</span>
+        <select
+          value={timezone}
+          onChange={(e) => dispatch(setTimezone(e.target.value))}
+          className="input-base w-auto"
+        >
+          {TIMEZONE_OPTIONS.map((tz) => (
+            <option key={tz.value} value={tz.value}>{tz.label}</option>
+          ))}
+        </select>
       </div>
 
       {/* Filters */}

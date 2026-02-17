@@ -176,7 +176,7 @@ export default function JournalPage() {
             className="h-8 text-xs"
           >
             All
-            <span className="ml-2 px-1.5 py-0.5 rounded bg-muted text-[10px] font-mono-num">
+            <span className="ml-2 px-1.5 py-0.5 rounded bg-muted text-muted-foreground text-[10px] font-mono-num">
               {filteredJournals.length}
             </span>
           </Button>
@@ -187,7 +187,7 @@ export default function JournalPage() {
             className="h-8 text-xs"
           >
             Journaled
-            <span className="ml-2 px-1.5 py-0.5 rounded bg-muted text-[10px] font-mono-num">
+            <span className="ml-2 px-1.5 py-0.5 rounded bg-muted text-muted-foreground text-[10px] font-mono-num">
               {stats?.statusCounts.journaled || 0}
             </span>
           </Button>
@@ -198,7 +198,7 @@ export default function JournalPage() {
             className="h-8 text-xs"
           >
             Pending
-            <span className="ml-2 px-1.5 py-0.5 rounded bg-muted text-[10px] font-mono-num">
+            <span className="ml-2 px-1.5 py-0.5 rounded bg-muted text-muted-foreground text-[10px] font-mono-num">
               {stats?.statusCounts.new || 0}
             </span>
           </Button>

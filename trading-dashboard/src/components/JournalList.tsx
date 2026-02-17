@@ -1,5 +1,7 @@
 import { TradeJournal } from '../types';
 import { cn } from '../lib/utils';
+import { useAppSelector } from '../store/hooks';
+import { formatDateInTimezone } from '../utils/timezone';
 
 interface JournalListProps {
   journals: TradeJournal[];
@@ -20,6 +22,8 @@ const getSymbolCategory = (symbol: string): { color: string; bg: string; label: 
 };
 
 export default function JournalList({ journals, selectedJournalId, onSelectJournal, isLoading }: JournalListProps) {
+  const timezone = useAppSelector((state) => state.trading.timezone);
+
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       new: { label: 'NEW', className: 'bg-primary/10 text-primary border-primary/20' },
@@ -47,8 +51,7 @@ export default function JournalList({ journals, selectedJournalId, onSelectJourn
   };
 
   const formatDate = (date: Date | string) => {
-    const d = typeof date === 'string' ? new Date(date) : date;
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    return formatDateInTimezone(date, timezone, { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   };
 
   if (isLoading) {

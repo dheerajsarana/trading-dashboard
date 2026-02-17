@@ -1,5 +1,7 @@
 import React from 'react';
 import { Trade } from '../types';
+import { useAppSelector } from '../store/hooks';
+import { formatDateInTimezone } from '../utils/timezone';
 
 interface DayTradesProps {
   trades: Trade[];
@@ -7,6 +9,8 @@ interface DayTradesProps {
 }
 
 const DayTrades: React.FC<DayTradesProps> = ({ trades, selectedDate }) => {
+  const timezone = useAppSelector((state) => state.trading.timezone);
+
   if (!selectedDate || trades.length === 0) {
     return (
       <div className="bg-card border rounded-xl p-6">
@@ -43,7 +47,7 @@ const DayTrades: React.FC<DayTradesProps> = ({ trades, selectedDate }) => {
       </div>
 
       <div className="text-muted-foreground text-sm mb-4">
-        {selectedDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+        {formatDateInTimezone(selectedDate, timezone, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
       </div>
 
       <div className="space-y-2 max-h-96 overflow-y-auto">
@@ -88,7 +92,7 @@ const DayTrades: React.FC<DayTradesProps> = ({ trades, selectedDate }) => {
               <div>
                 <span className="text-muted-foreground">Time: </span>
                 <span className="text-foreground">
-                  {trade.closeTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                  {formatDateInTimezone(trade.closeTime, timezone, { hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>
               <div>

@@ -4,11 +4,13 @@ import {
   setTradeFilter,
   setAssetFilter,
   setSelectedDate,
+  setTimezone,
   fetchTrades,
   uploadTradesFile,
   fetchStats,
   fetchEquityCurve,
 } from '../../store/tradingSlice';
+import { TIMEZONE_OPTIONS } from '../../utils/timezone';
 import FileUpload from '../../components/FileUpload';
 import MetricCard from '../../components/MetricCard';
 import EquityCurve from '../../components/EquityCurve';
@@ -58,6 +60,7 @@ const AnalyticsMenu = () => {
         tradeFilter,
         assetFilter,
         selectedDate,
+        timezone,
         isLoading,
         error,
     } = useAppSelector((state) => state.trading);
@@ -289,6 +292,26 @@ const AnalyticsMenu = () => {
                                     </Button>
                                 </div>
                             </div>
+
+                            {/* Timezone */}
+                            <div className="flex items-center gap-2 ml-auto">
+                                <span className="text-sm text-muted-foreground">Timezone:</span>
+                                <Select
+                                    value={timezone}
+                                    onValueChange={(value) => dispatch(setTimezone(value))}
+                                >
+                                    <SelectTrigger className="w-[180px]">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {TIMEZONE_OPTIONS.map((tz) => (
+                                            <SelectItem key={tz.value} value={tz.value}>
+                                                {tz.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
                     </CardContent>
                 </Card>
@@ -416,12 +439,14 @@ const AnalyticsMenu = () => {
                         <DrawdownIntelligence stats={drawdownStats} />
                     </div>
 
-                    <div id="duration" className="mb-6">
-                        <TradeDurationAnalysis stats={durationStats} />
-                    </div>
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                        <div id="duration">
+                            <TradeDurationAnalysis stats={durationStats} />
+                        </div>
 
-                    <div id="sessions">
-                        <SessionAnalytics sessions={sessionStats} />
+                        <div id="sessions">
+                            <SessionAnalytics sessions={sessionStats} />
+                        </div>
                     </div>
                 </section>
             </div>

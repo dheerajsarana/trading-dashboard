@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useAppDispatch } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { formatDateInTimezone } from '../utils/timezone';
 import { updateJournal, createJournal } from '../store/journalSlice';
 import { fetchTradeScreenshots } from '../store/screenshotSlice';
 import { TradeJournal } from '../types';
@@ -26,6 +27,7 @@ const getSymbolCategory = (symbol: string): { color: string; bg: string; label: 
 
 export default function JournalDetail({ journal, onSave }: JournalDetailProps) {
   const dispatch = useAppDispatch();
+  const timezone = useAppSelector((state) => state.trading.timezone);
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
@@ -185,7 +187,7 @@ export default function JournalDetail({ journal, onSave }: JournalDetailProps) {
               <span className="text-border">|</span>
               <span className="font-mono-num">Size {trade.volume.toFixed(2)}</span>
               <span className="text-border">|</span>
-              <span>{new Date(trade.closeTime).toLocaleDateString()}</span>
+              <span>{formatDateInTimezone(trade.closeTime, timezone, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
             </div>
           </div>
         </div>

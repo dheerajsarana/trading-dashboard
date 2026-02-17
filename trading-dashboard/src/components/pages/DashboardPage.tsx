@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchStats, fetchTrades } from '../../store/tradingSlice';
+import { formatDateInTimezone } from '../../utils/timezone';
 import { fetchMT5Accounts, fetchMT5Dashboard } from '../../store/mt5Slice';
 import MT5ConnectModal from '../mt5/MT5ConnectModal';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
@@ -9,7 +10,7 @@ import { TrendingUp, TrendingDown, Target, BarChart3, Activity, Eye } from 'luci
 export default function DashboardPage() {
   const dispatch = useAppDispatch();
 
-  const { stats, allTrades, isLoading: tradingLoading } = useAppSelector((state) => state.trading);
+  const { stats, allTrades, timezone, isLoading: tradingLoading } = useAppSelector((state) => state.trading);
   const { accounts, selectedAccountId, dashboardData, isLoading: mt5Loading } = useAppSelector((state) => state.mt5);
 
   // Fetch combined stats and trades on mount
@@ -219,7 +220,7 @@ export default function DashboardPage() {
                       <div>
                         <p className="font-semibold">{trade.symbol}</p>
                         <p className="text-sm text-muted-foreground">
-                          {new Date(trade.closeTime).toLocaleDateString()} • {trade.volume} lots
+                          {formatDateInTimezone(trade.closeTime, timezone, { month: 'short', day: 'numeric', year: 'numeric' })} • {trade.volume} lots
                           {trade.source === 'mt5' && (
                             <span className="ml-1 text-green-400">[MT5]</span>
                           )}

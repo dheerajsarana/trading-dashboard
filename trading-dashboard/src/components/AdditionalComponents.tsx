@@ -1,6 +1,8 @@
 import React from 'react';
 import { DayPerformance, Trade } from '../types';
 import { Calendar, TrendingUp, TrendingDown, Award, BarChart3, Clock } from 'lucide-react';
+import { useAppSelector } from '../store/hooks';
+import { formatDateInTimezone } from '../utils/timezone';
 
 interface DayPerformanceChartProps {
   data: DayPerformance[];
@@ -241,6 +243,7 @@ interface RecentTradesProps {
 }
 
 export const RecentTrades: React.FC<RecentTradesProps> = ({ trades }) => {
+  const timezone = useAppSelector((state) => state.trading.timezone);
   const recentTrades = trades.slice(-10).reverse();
 
   return (
@@ -278,7 +281,7 @@ export const RecentTrades: React.FC<RecentTradesProps> = ({ trades }) => {
                   <div>
                     <div className="text-sm font-medium">{trade.symbol}</div>
                     <div className="text-muted-foreground text-[10px]">
-                      {new Date(trade.closeTime).toLocaleDateString()}
+                      {formatDateInTimezone(trade.closeTime, timezone, { month: 'short', day: 'numeric', year: 'numeric' })}
                     </div>
                   </div>
                 </div>

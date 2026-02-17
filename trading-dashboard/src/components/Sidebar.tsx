@@ -44,7 +44,7 @@ const Sidebar = ({ activeSection, onMenuChange }: SidebarProps) => {
           variant="ghost"
           size="icon"
           onClick={() => dispatch(toggleSidebar())}
-          className="fixed top-4 left-4 z-50 bg-card border shadow-sm hover:bg-muted"
+          className="fixed top-2 left-4 z-50 bg-card border shadow-sm hover:bg-muted"
         >
           <PanelLeft className="h-5 w-5" />
         </Button>
@@ -58,7 +58,7 @@ const Sidebar = ({ activeSection, onMenuChange }: SidebarProps) => {
         )}
       >
         {/* Logo/Header */}
-        <div className="flex h-16 items-center justify-between px-5 border-b flex-shrink-0">
+        <div className="flex h-14 items-center justify-between px-5 border-b flex-shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <BarChart3 className="h-4 w-4 text-primary" />

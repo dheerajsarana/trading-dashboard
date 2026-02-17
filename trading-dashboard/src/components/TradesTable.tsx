@@ -1,6 +1,8 @@
 import { Trade } from '../types';
 import { Trash2, TrendingUp, TrendingDown, Pencil, Upload, Zap } from 'lucide-react';
 import { Button } from './ui/button';
+import { useAppSelector } from '../store/hooks';
+import { formatDateInTimezone } from '../utils/timezone';
 
 interface TradesTableProps {
   trades: Trade[];
@@ -20,8 +22,10 @@ const getSymbolCategory = (symbol: string): { color: string; bg: string; label: 
 };
 
 export default function TradesTable({ trades, onDeleteTrade, isLoading }: TradesTableProps) {
+  const timezone = useAppSelector((state) => state.trading.timezone);
+
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleString('en-US', {
+    return formatDateInTimezone(date, timezone, {
       month: '2-digit',
       day: '2-digit',
       year: 'numeric',

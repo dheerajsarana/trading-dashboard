@@ -276,10 +276,11 @@ export class StatisticsService {
   static getTradingSession(date: Date): string {
     const hour = date.getUTCHours();
 
-    if (hour >= 0 && hour < 9) return 'Asia';
-    if (hour >= 13 && hour < 17) return 'London-NY Overlap';
-    if (hour >= 8 && hour < 17) return 'London';
-    if (hour >= 17 && hour < 22) return 'New York';
+    if (hour >= 1 && hour < 7) return 'Asia';
+    if (hour >= 7 && hour < 8) return 'Asia-London Overlap';
+    if (hour >= 8 && hour < 12) return 'London';
+    if (hour >= 12 && hour < 13) return 'London-NY Overlap';
+    if (hour >= 13 && hour < 17) return 'New York';
     return 'Asia';
   }
 
@@ -288,9 +289,10 @@ export class StatisticsService {
       [key: string]: { trades: TradeRecord[]; pnl: number };
     } = {
       Asia: { trades: [], pnl: 0 },
+      'Asia-London Overlap': { trades: [], pnl: 0 },
       London: { trades: [], pnl: 0 },
-      'New York': { trades: [], pnl: 0 },
       'London-NY Overlap': { trades: [], pnl: 0 },
+      'New York': { trades: [], pnl: 0 },
     };
 
     trades.forEach((trade) => {
