@@ -261,7 +261,7 @@ export const RecentTrades: React.FC<RecentTradesProps> = ({ trades }) => {
       ) : (
         <div className="space-y-1 max-h-96 overflow-y-auto">
           {recentTrades.map((trade, index) => {
-            const category = getSymbolCategory(trade.symbol);
+            // const category = getSymbolCategory(trade.symbol);
             return (
               <div
                 key={index}
