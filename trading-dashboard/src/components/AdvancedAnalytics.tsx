@@ -3,6 +3,7 @@ import { DrawdownStats, DurationStats, SessionStats } from '../types';
 import { TrendingDown, Globe, Info, Zap, Check, X, BarChart3, Timer, Target } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Sector } from 'recharts';
 import { useAppSelector } from '../store/hooks';
+import { getTimezoneAbbr } from '../utils/timezone';
 
 interface DrawdownIntelligenceProps {
   stats: DrawdownStats;
@@ -293,10 +294,7 @@ function formatSessionTime(session: string, timezone: string): string {
     });
   };
 
-  const tzAbbr = new Intl.DateTimeFormat('en-US', { timeZone: timezone, timeZoneName: 'short' })
-    .formatToParts(new Date()).find(p => p.type === 'timeZoneName')?.value || '';
-
-  return `${fmt(range.start[0], range.start[1])}–${fmt(range.end[0], range.end[1])} ${tzAbbr}`;
+  return `${fmt(range.start[0], range.start[1])}–${fmt(range.end[0], range.end[1])} ${getTimezoneAbbr(timezone)}`;
 }
 
 const SESSION_COLORS: Record<string, string> = {

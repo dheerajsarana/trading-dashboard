@@ -1,11 +1,15 @@
 export const TIMEZONE_OPTIONS = [
-  { value: 'Asia/Kolkata', label: 'IST (UTC+5:30)' },
-  { value: 'UTC', label: 'UTC' },
-  { value: 'America/New_York', label: 'EST/EDT (UTC-5/-4)' },
-  { value: 'Europe/London', label: 'GMT/BST (UTC+0/+1)' },
-  { value: 'Asia/Tokyo', label: 'JST (UTC+9)' },
-  { value: 'Asia/Dubai', label: 'GST (UTC+4)' },
+  { value: 'Asia/Kolkata', label: 'IST (UTC+5:30)', abbr: 'IST' },
+  { value: 'UTC', label: 'UTC', abbr: 'UTC' },
+  { value: 'America/New_York', label: 'EST/EDT (UTC-5/-4)', abbr: 'ET' },
+  { value: 'Europe/London', label: 'GMT/BST (UTC+0/+1)', abbr: 'GMT' },
+  { value: 'Asia/Tokyo', label: 'JST (UTC+9)', abbr: 'JST' },
+  { value: 'Asia/Dubai', label: 'GST (UTC+4)', abbr: 'GST' },
 ] as const;
+
+export function getTimezoneAbbr(timezone: string): string {
+  return TIMEZONE_OPTIONS.find(tz => tz.value === timezone)?.abbr || timezone;
+}
 
 export function formatDateInTimezone(
   date: Date | string,
