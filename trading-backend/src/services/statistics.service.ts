@@ -274,13 +274,20 @@ export class StatisticsService {
   }
 
   static getTradingSession(date: Date): string {
-    const hour = date.getUTCHours();
+    // Convert to total minutes since midnight UTC for precise :30 boundaries
+    const totalMinutes = date.getUTCHours() * 60 + date.getUTCMinutes();
 
-    if (hour >= 1 && hour < 7) return 'Asia';
-    if (hour >= 7 && hour < 8) return 'Asia-London Overlap';
-    if (hour >= 8 && hour < 12) return 'London';
-    if (hour >= 12 && hour < 13) return 'London-NY Overlap';
-    if (hour >= 13 && hour < 17) return 'New York';
+    // Session boundaries in UTC minutes (derived from IST :30 boundaries)
+    // Asia:                01:00–06:30 UTC  (6:30 AM–12:00 PM IST)
+    // Asia-London Overlap: 06:30–08:00 UTC  (12:00 PM–1:30 PM IST)
+    // London:              08:00–12:00 UTC  (1:30 PM–5:30 PM IST)
+    // London-NY Overlap:   12:00–13:00 UTC  (5:30 PM–6:30 PM IST)
+    // New York:            13:00–17:00 UTC  (6:30 PM–10:30 PM IST)
+    if (totalMinutes >= 60 && totalMinutes < 390) return 'Asia';            // 01:00–06:30
+    if (totalMinutes >= 390 && totalMinutes < 480) return 'Asia-London Overlap'; // 06:30–08:00
+    if (totalMinutes >= 480 && totalMinutes < 720) return 'London';          // 08:00–12:00
+    if (totalMinutes >= 720 && totalMinutes < 780) return 'London-NY Overlap'; // 12:00–13:00
+    if (totalMinutes >= 780 && totalMinutes < 1020) return 'New York';       // 13:00–17:00
     return 'Asia';
   }
 

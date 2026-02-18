@@ -273,11 +273,11 @@ interface SessionAnalyticsProps {
 
 // Session time ranges in UTC (hour, minute)
 const SESSION_UTC_RANGES: Record<string, { start: [number, number]; end: [number, number] }> = {
-  'Asia':                { start: [1, 0],  end: [7, 0] },
-  'Asia-London Overlap': { start: [7, 0],  end: [8, 0] },
-  'London':              { start: [8, 0],  end: [12, 0] },
-  'London-NY Overlap':   { start: [12, 0], end: [13, 0] },
-  'New York':            { start: [13, 0], end: [17, 0] },
+  'Asia':                { start: [1, 0],   end: [6, 30] },
+  'Asia-London Overlap': { start: [6, 30],  end: [8, 0] },
+  'London':              { start: [8, 0],   end: [12, 0] },
+  'London-NY Overlap':   { start: [12, 0],  end: [13, 0] },
+  'New York':            { start: [13, 0],  end: [17, 0] },
 };
 
 function formatSessionTime(session: string, timezone: string): string {

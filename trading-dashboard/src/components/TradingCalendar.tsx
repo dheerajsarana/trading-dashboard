@@ -104,7 +104,7 @@ const TradingCalendar: React.FC<TradingCalendarProps> = ({ trades, onDateSelect 
         <div className={`text-xs font-medium ${today ? 'text-primary' : ''}`}>{day}</div>
         {hasTradesOnDay && (
           <div className={`text-[10px] font-mono-num font-semibold ${pnl > 0 ? 'text-profit' : 'text-loss'}`}>
-            {pnl > 0 ? '+' : ''}${pnl.toFixed(0)}
+            {pnl > 0 ? '+' : ''}${pnl.toFixed(2)}
           </div>
         )}
       </div>
