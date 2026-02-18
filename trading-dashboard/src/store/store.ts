@@ -5,6 +5,7 @@ import journalReducer from './journalSlice';
 import mt5Reducer from './mt5Slice';
 import screenshotReducer from './screenshotSlice';
 import backtestReducer from './backtestSlice';
+import subscriptionReducer from './subscriptionSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     mt5: mt5Reducer,
     screenshots: screenshotReducer,
     backtest: backtestReducer,
+    subscription: subscriptionReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

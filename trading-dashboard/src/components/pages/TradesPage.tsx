@@ -2,12 +2,12 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchTradesWithFilters, deleteTrade, deleteAllTrades, setTimezone } from '../../store/tradingSlice';
 import { TIMEZONE_OPTIONS } from '../../utils/timezone';
-import { fetchMT5Accounts } from '../../store/mt5Slice';
+// import { fetchMT5Accounts } from '../../store/mt5Slice';
 import { TradeFiltersState } from '../../types';
 import TradesTable from '../TradesTable';
 import TradeFilters from '../TradeFilters';
 import AddTradeModal from '../AddTradeModal';
-import MT5ConnectModal from '../mt5/MT5ConnectModal';
+// import MT5ConnectModal from '../mt5/MT5ConnectModal';
 import { Button } from '../ui/button';
 import { Plus, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useToast } from '../ui/use-toast';
@@ -29,10 +29,10 @@ export default function TradesPage() {
     limit: 50,
   });
 
-  // Fetch MT5 accounts on mount
-  useEffect(() => {
-    dispatch(fetchMT5Accounts());
-  }, [dispatch]);
+  // MT5 accounts fetch disabled
+  // useEffect(() => {
+  //   dispatch(fetchMT5Accounts());
+  // }, [dispatch]);
 
   // Extract unique symbols from all trades
   const availableSymbols = useMemo(() => {
@@ -289,8 +289,8 @@ export default function TradesPage() {
         onSuccess={handleModalSuccess}
       />
 
-      {/* MT5 Connect Modal */}
-      <MT5ConnectModal />
+      {/* MT5 Connect Modal - disabled */}
+      {/* <MT5ConnectModal /> */}
 
       {/* Confirmation Dialog */}
       <ConfirmDialog />

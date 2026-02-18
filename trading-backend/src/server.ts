@@ -10,7 +10,9 @@ import { StatsController } from './controllers/stats.controller';
 import { JournalController } from './controllers/journal.controller';
 import { MT5Controller } from './controllers/mt5.controller';
 import { BacktestController } from './controllers/backtest.controller';
+import { SubscriptionController } from './controllers/subscription.controller';
 import screenshotRoutes from './routes/screenshot.routes';
+import { requirePro } from './middleware/subscription';
 
 // Load environment variables
 dotenv.config();
@@ -35,6 +37,10 @@ app.use(
     credentials: true,
   })
 );
+
+// Paddle webhook needs raw body for signature verification — must be before express.json()
+app.post('/api/subscription/webhook', express.text({ type: 'application/json' }), SubscriptionController.webhook);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -59,20 +65,20 @@ app.delete('/api/trades', authenticateToken, TradesController.deleteAllTrades);
 app.post('/api/trades/upload', authenticateToken, upload.single('file'), TradesController.uploadExcel);
 app.get('/api/trades/symbols', authenticateToken, TradesController.getSymbols);
 
-// Stats routes (protected)
-app.get('/api/stats', authenticateToken, StatsController.getAllStats);
-app.get('/api/stats/equity', authenticateToken, StatsController.getEquityCurve);
-app.get('/api/stats/calendar', authenticateToken, StatsController.getCalendarData);
+// Stats routes (protected + pro only)
+app.get('/api/stats', authenticateToken, requirePro, StatsController.getAllStats);
+app.get('/api/stats/equity', authenticateToken, requirePro, StatsController.getEquityCurve);
+app.get('/api/stats/calendar', authenticateToken, requirePro, StatsController.getCalendarData);
 app.post('/api/stats/invalidate', authenticateToken, StatsController.invalidateCache);
 
-// Journal routes (protected)
-app.get('/api/journals', authenticateToken, JournalController.getAllJournals);
-app.get('/api/journals/stats', authenticateToken, JournalController.getJournalStats);
-app.get('/api/journals/:id', authenticateToken, JournalController.getJournalById);
-app.get('/api/journals/trade/:tradeId', authenticateToken, JournalController.getJournalByTradeId);
-app.post('/api/journals', authenticateToken, JournalController.createJournal);
-app.put('/api/journals/:id', authenticateToken, JournalController.updateJournal);
-app.delete('/api/journals/:id', authenticateToken, JournalController.deleteJournal);
+// Journal routes (protected + pro only)
+app.get('/api/journals', authenticateToken, requirePro, JournalController.getAllJournals);
+app.get('/api/journals/stats', authenticateToken, requirePro, JournalController.getJournalStats);
+app.get('/api/journals/:id', authenticateToken, requirePro, JournalController.getJournalById);
+app.get('/api/journals/trade/:tradeId', authenticateToken, requirePro, JournalController.getJournalByTradeId);
+app.post('/api/journals', authenticateToken, requirePro, JournalController.createJournal);
+app.put('/api/journals/:id', authenticateToken, requirePro, JournalController.updateJournal);
+app.delete('/api/journals/:id', authenticateToken, requirePro, JournalController.deleteJournal);
 
 // MT5 routes (protected)
 app.post('/api/mt5/accounts', authenticateToken, MT5Controller.connectAccount);
@@ -96,6 +102,10 @@ app.put('/api/backtest/sessions/:id/complete', authenticateToken, BacktestContro
 app.delete('/api/backtest/sessions/:id', authenticateToken, BacktestController.deleteSession);
 app.post('/api/backtest/sessions/:id/trades', authenticateToken, BacktestController.addTrade);
 app.put('/api/backtest/trades/:tradeId/close', authenticateToken, BacktestController.closeTrade);
+
+// Subscription routes (webhook registered above before express.json)
+app.get('/api/subscription/status', authenticateToken, SubscriptionController.getStatus);
+app.post('/api/subscription/cancel', authenticateToken, SubscriptionController.cancel);
 
 // Screenshot routes (protected)
 app.use('/api/screenshots', screenshotRoutes);

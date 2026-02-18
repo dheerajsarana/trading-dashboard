@@ -2,16 +2,16 @@ import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchStats, fetchTrades } from '../../store/tradingSlice';
 import { formatDateInTimezone } from '../../utils/timezone';
-import { fetchMT5Accounts, fetchMT5Dashboard } from '../../store/mt5Slice';
-import MT5ConnectModal from '../mt5/MT5ConnectModal';
+// import { fetchMT5Accounts, fetchMT5Dashboard } from '../../store/mt5Slice';
+// import MT5ConnectModal from '../mt5/MT5ConnectModal';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { TrendingUp, TrendingDown, Target, BarChart3, Activity, Eye } from 'lucide-react';
+import { TrendingUp, TrendingDown, Target, BarChart3, Activity } from 'lucide-react';
 
 export default function DashboardPage() {
   const dispatch = useAppDispatch();
 
   const { stats, allTrades, timezone, isLoading: tradingLoading } = useAppSelector((state) => state.trading);
-  const { accounts, selectedAccountId, dashboardData, isLoading: mt5Loading } = useAppSelector((state) => state.mt5);
+  // const { accounts, selectedAccountId, dashboardData, isLoading: mt5Loading } = useAppSelector((state) => state.mt5);
 
   // Fetch combined stats and trades on mount
   useEffect(() => {
@@ -19,16 +19,16 @@ export default function DashboardPage() {
     dispatch(fetchStats({ timePeriod: '30days', assetFilter: 'all', tradeFilter: 'all' }));
   }, [dispatch]);
 
-  // Fetch MT5 data
-  useEffect(() => {
-    dispatch(fetchMT5Accounts());
-  }, [dispatch]);
+  // MT5 data fetching disabled
+  // useEffect(() => {
+  //   dispatch(fetchMT5Accounts());
+  // }, [dispatch]);
 
-  useEffect(() => {
-    if (selectedAccountId) {
-      dispatch(fetchMT5Dashboard({ accountId: selectedAccountId, timePeriod: '30days' }));
-    }
-  }, [dispatch, selectedAccountId]);
+  // useEffect(() => {
+  //   if (selectedAccountId) {
+  //     dispatch(fetchMT5Dashboard({ accountId: selectedAccountId, timePeriod: '30days' }));
+  //   }
+  // }, [dispatch, selectedAccountId]);
 
   const apiStats = stats?.basic || {
     totalPnL: 0,
@@ -40,7 +40,7 @@ export default function DashboardPage() {
     losses: 0,
   };
 
-  const selectedAccount = accounts?.find((acc) => acc.id === selectedAccountId);
+  // const selectedAccount = accounts?.find((acc) => acc.id === selectedAccountId);
 
   return (
     <div className="space-y-6">
@@ -131,8 +131,8 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {/* MT5 Account Status */}
-      {accounts.length > 0 && selectedAccount && (
+      {/* MT5 Account Status - disabled */}
+      {/* {accounts.length > 0 && selectedAccount && (
         <section>
           <h2 className="text-lg font-semibold mb-4">MT5 Account</h2>
           <Card>
@@ -157,10 +157,10 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </section>
-      )}
+      )} */}
 
-      {/* Open Positions from MT5 */}
-      {dashboardData && dashboardData.positions.length > 0 && (
+      {/* Open Positions from MT5 - disabled */}
+      {/* {dashboardData && dashboardData.positions.length > 0 && (
         <section>
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <Eye className="h-5 w-5" />
@@ -197,7 +197,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </section>
-      )}
+      )} */}
 
       {/* Recent Trades */}
       {allTrades.length > 0 && (
@@ -239,14 +239,14 @@ export default function DashboardPage() {
       )}
 
       {/* Loading */}
-      {(tradingLoading || mt5Loading) && allTrades.length === 0 && (
+      {tradingLoading && allTrades.length === 0 && (
         <div className="flex items-center justify-center py-12">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
         </div>
       )}
 
-      {/* MT5 Connect Modal */}
-      <MT5ConnectModal />
+      {/* MT5 Connect Modal - disabled */}
+      {/* <MT5ConnectModal /> */}
     </div>
   );
 }

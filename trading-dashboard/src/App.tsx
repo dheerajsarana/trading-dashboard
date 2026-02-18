@@ -7,7 +7,11 @@ import Sidebar from './components/Sidebar';
 import AnalyticsMenu from './components/menus/AnalyticsMenu';
 import TradesPage from './components/pages/TradesPage';
 import JournalPage from './components/pages/JournalPage';
-import BacktestPage from './components/pages/BacktestPage';
+// import BacktestPage from './components/pages/BacktestPage';
+import PricingPage from './components/pages/PricingPage';
+import SubscriptionGate from './components/SubscriptionGate';
+import TermsPage from './components/pages/TermsPage';
+import PrivacyPage from './components/pages/PrivacyPage';
 import LoginForm from './components/auth/LoginForm';
 import RegisterForm from './components/auth/RegisterForm';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -31,10 +35,15 @@ const menus = [
     path: "/dashboard/journal",
     component: <JournalPage />
   },
+  // {
+  //   id: "backtest",
+  //   path: "/dashboard/backtest",
+  //   component: <BacktestPage />
+  // }
   {
-    id: "backtest",
-    path: "/dashboard/backtest",
-    component: <BacktestPage />
+    id: "pricing",
+    path: "/dashboard/pricing",
+    component: <PricingPage />
   }
 ]
 
@@ -60,8 +69,10 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
         return { title: 'Trades', description: 'View and manage your trade history' };
       case 'journal':
         return { title: 'Journal', description: 'Document and review your decisions' };
-      case 'backtest':
-        return { title: 'FX Replay', description: 'Practice with historical price data' };
+      // case 'backtest':
+      //   return { title: 'FX Replay', description: 'Practice with historical price data' };
+      case 'pricing':
+        return { title: 'Pricing', description: 'Upgrade your plan' };
       default:
         return { title: 'Dashboard', description: 'Your trading overview' };
     }
@@ -132,6 +143,8 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginForm />} />
         <Route path="/register" element={<RegisterForm />} />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
 
         <Route
           path="/dashboard"
@@ -139,10 +152,11 @@ function App() {
             <ProtectedRoute>
               <DashboardLayout>
                 <Routes>
-                  <Route path="analytics" element={<AnalyticsMenu />} />
+                  <Route path="analytics" element={<SubscriptionGate feature="Analytics"><AnalyticsMenu /></SubscriptionGate>} />
                   <Route path="trades" element={<TradesPage />} />
-                  <Route path="journal" element={<JournalPage />} />
-                  <Route path="backtest" element={<BacktestPage />} />
+                  <Route path="journal" element={<SubscriptionGate feature="Trade Journal"><JournalPage /></SubscriptionGate>} />
+                  {/* <Route path="backtest" element={<BacktestPage />} /> */}
+                  <Route path="pricing" element={<PricingPage />} />
                   <Route path="" element={<Navigate to="/dashboard/analytics" replace />} />
                 </Routes>
               </DashboardLayout>

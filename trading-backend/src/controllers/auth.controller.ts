@@ -30,6 +30,7 @@ export class AuthController {
           id: true,
           email: true,
           name: true,
+          subscriptionStatus: true,
           createdAt: true,
         },
       });
@@ -88,6 +89,7 @@ export class AuthController {
           id: user.id,
           email: user.email,
           name: user.name,
+          subscriptionStatus: user.subscriptionStatus,
         },
         token,
       });
@@ -112,6 +114,7 @@ export class AuthController {
           id: true,
           email: true,
           name: true,
+          subscriptionStatus: true,
           createdAt: true,
         },
       });

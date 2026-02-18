@@ -201,6 +201,12 @@ export default function RegisterForm() {
               </Link>
             </p>
           </form>
+
+          <div className="text-center text-xs text-muted-foreground mt-6 space-x-3">
+            <Link to="/terms" className="hover:text-foreground transition-colors">Terms</Link>
+            <span>·</span>
+            <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
+          </div>
         </div>
       </div>
     </div>

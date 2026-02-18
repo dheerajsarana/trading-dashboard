@@ -7,9 +7,10 @@ import {
   PanelLeft,
   List,
   BookOpen,
-  PlayCircle,
+  // PlayCircle,
   LogOut,
   User,
+  Crown,
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { toggleSidebar } from "../store/tradingSlice";
@@ -20,16 +21,19 @@ interface SidebarProps {
   onMenuChange: (section: string) => void;
 }
 
+const proFeatures = new Set(["analytics", "journal"]);
+
 const Sidebar = ({ activeSection, onMenuChange }: SidebarProps) => {
   const dispatch = useAppDispatch();
   const isSidebarOpen = useAppSelector((state) => state.trading.isSidebarOpen);
   const { user } = useAppSelector((state) => state.auth);
+  const { plan } = useAppSelector((state) => state.subscription);
 
   const menuItems = [
     { id: "analytics", label: "Analytics", icon: LineChart, description: "Performance metrics" },
     { id: "trades", label: "Trades", icon: List, description: "Trade history" },
     { id: "journal", label: "Journal", icon: BookOpen, description: "Trade notes" },
-    { id: "backtest", label: "FX Replay", icon: PlayCircle, description: "Practice trading" },
+    // { id: "backtest", label: "FX Replay", icon: PlayCircle, description: "Practice trading" },
   ];
 
   const handleLogout = () => {
@@ -86,6 +90,7 @@ const Sidebar = ({ activeSection, onMenuChange }: SidebarProps) => {
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeSection === item.id;
+              const isPro = proFeatures.has(item.id) && plan !== 'pro';
               return (
                 <button
                   key={item.id}
@@ -99,11 +104,29 @@ const Sidebar = ({ activeSection, onMenuChange }: SidebarProps) => {
                 >
                   <Icon className={cn("h-[18px] w-[18px]", isActive && "text-primary")} />
                   <span>{item.label}</span>
+                  {isPro && (
+                    <span className="ml-auto text-[10px] font-semibold bg-amber-500/15 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded">
+                      PRO
+                    </span>
+                  )}
                 </button>
               );
             })}
           </nav>
         </div>
+
+        {/* Upgrade CTA for free users */}
+        {plan !== 'pro' && (
+          <div className="px-3 pb-2">
+            <button
+              onClick={() => onMenuChange('pricing')}
+              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+            >
+              <Crown className="h-4 w-4" />
+              <span>Upgrade to Pro</span>
+            </button>
+          </div>
+        )}
 
         {/* User Profile Footer */}
         <div className="border-t p-3 flex-shrink-0">

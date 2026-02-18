@@ -14,6 +14,7 @@ model User {
   email     String   @unique
   password  String
   name      String?
+  subscriptionStatus String @default("free") // 'free' or 'pro'
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -22,6 +23,7 @@ model User {
   mt5Accounts       MT5Account[]
   screenshots       Screenshot[]
   backtestSessions  BacktestSession[]
+  subscriptions     Subscription[]
 
   @@map("users")
 }
@@ -413,4 +415,31 @@ model BacktestTrade {
 
   @@index([sessionId])
   @@map("backtest_trades")
+}
+
+// ============================================
+// Subscription / Payment Models
+// ============================================
+
+model Subscription {
+  id                      String    @id @default(cuid())
+  userId                  String
+  user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  paddleSubscriptionId    String?
+  paddleCustomerId        String?
+  paddlePriceId           String?
+  plan                    String    @default("pro")
+  status                  String    @default("active") // 'active', 'cancelled', 'expired', 'past_due'
+
+  currentPeriodStart      DateTime?
+  currentPeriodEnd        DateTime?
+
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([paddleCustomerId])
+  @@index([paddleSubscriptionId])
+  @@map("subscriptions")
 }

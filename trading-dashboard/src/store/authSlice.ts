@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { authApi, LoginCredentials, RegisterData } from '../api/auth.api';
 import { authService, User } from '../services/auth.service';
+import { setPlan } from './subscriptionSlice';
 
 interface AuthState {
   user: User | null;
@@ -23,11 +24,12 @@ const initialState: AuthState = {
  */
 export const registerUser = createAsyncThunk(
   'auth/register',
-  async (data: RegisterData, { rejectWithValue }) => {
+  async (data: RegisterData, { dispatch, rejectWithValue }) => {
     try {
       const response = await authApi.register(data);
       authService.saveToken(response.token);
       authService.saveUser(response.user);
+      dispatch(setPlan(response.user.subscriptionStatus || 'free'));
       return response;
     } catch (error: any) {
       return rejectWithValue(error.message || 'Registration failed');
@@ -40,11 +42,12 @@ export const registerUser = createAsyncThunk(
  */
 export const loginUser = createAsyncThunk(
   'auth/login',
-  async (credentials: LoginCredentials, { rejectWithValue }) => {
+  async (credentials: LoginCredentials, { dispatch, rejectWithValue }) => {
     try {
       const response = await authApi.login(credentials);
       authService.saveToken(response.token);
       authService.saveUser(response.user);
+      dispatch(setPlan(response.user.subscriptionStatus || 'free'));
       return response;
     } catch (error: any) {
       console.log('Login error caught:', error);
@@ -79,7 +82,7 @@ export const logoutUser = createAsyncThunk(
  */
 export const checkAuth = createAsyncThunk(
   'auth/checkAuth',
-  async (_, { rejectWithValue }) => {
+  async (_, { dispatch, rejectWithValue }) => {
     try {
       const token = authService.getToken();
       if (!token) {
@@ -89,6 +92,7 @@ export const checkAuth = createAsyncThunk(
       // Verify token with backend
       const response = await authApi.getMe();
       authService.saveUser(response.user);
+      dispatch(setPlan(response.user.subscriptionStatus || 'free'));
       return { user: response.user, token };
     } catch (error: any) {
       // Token is invalid, clear auth

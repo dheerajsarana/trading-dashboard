@@ -86,6 +86,10 @@ class ApiClient {
 
     // Handle 403 Forbidden
     if (response.status === 403) {
+      const errorCode = data?.code;
+      if (errorCode === 'SUBSCRIPTION_REQUIRED') {
+        throw new Error('Pro subscription required');
+      }
       throw new Error('Access denied');
     }
 
